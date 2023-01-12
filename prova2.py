@@ -3,9 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import streamlit as st
 import seaborn as sb
-mental_health = pd.read_csv("Mental_Dataset.csv")
-mental_health.info()# I see that there are many null values with different data type. I find it interesting that in the foue columns there are just 6468 values, way much less than the total. First of all, I want to change the object values (that are actually numbers) into floats.
-mental_health.head() 
+mental_health = pd.read_csv("Mental_Dataset.csv") 
 
 st.title("European Trends in Mental Health Project")
 st.header("Aim of the project")
@@ -13,19 +11,13 @@ st.markdown("This project aims to study the mental disorders trends across Europ
 
 st.header("Exploring and cleaning the dataset")
 st.markdown("The first thing I did is checking the information of the dataset and I see that there were many null values and numerical values that were indicated as object. Because of that, firstly I wanted to change the object values into floats, starting by the Schizophrenia (%) column. Soon I realized that there is a problem in the column Schizophrenia (%). Apparentely there was a string in the column at row 6468.")
-mental_health["Schizophrenia (%)"] = mental_health["Schizophrenia (%)"].astype(float)
 st.markdown(" I discovered a very interesting thing: there was the possibility that my dataframe is actually made by more datasets put together. To check that the row 6468 contains the keys of a whole new dataframe, I print the following five rows just to be sure of my supposition.")
 st.markdown("As I thought, this is the beginning of a whole new dataset. I have to split mental_health into parts and merge them horizontally (probably the owner has concat them vertically).")
-mystery_row=mental_health.loc[mental_health["Schizophrenia (%)"]== "Prevalence in males (%)"]
-mystery_row 
-mental_health[6468:6473] 
 
 index_to_keep_0 = np.arange(6468)
 mental_1 = pd.read_csv("Mental_Dataset.csv").loc[index_to_keep_0]
 index_to_keep = np.arange(6469,108553)
 mental_2 = pd.read_csv("Mental_Dataset.csv").loc[index_to_keep]
-
-# now that I have two dataframe I want to clean them singularly, starting by mental_1.
 
 # MENTAL_1
 mental_1.info() # what I am interested in is checking that the number of the disorders matches with the Entity one
@@ -42,53 +34,33 @@ mental_2.info() # Firstly, I drop the empty columns
 mental_2.head()
 mental_2 = mental_2.drop(["Alcohol use disorders (%)","Depression (%)", "Drug use disorders (%)", "Anxiety disorders (%)", "Code", "index"], axis = 1)
 mental_2.info() # now that I have dropped the empty columns, I have to rename the remaining columns.
-mental_2.rename(columns={"Schizophrenia (%)": "Prevalence in males (%)", "Bipolar disorder (%)": "Prevalence in females (%)", "Eating disorders (%)": "Population"}, inplace = True)
-
-# Before dealing with the null values, I want to change the data that are objects in float
-mental_2["Prevalence in males (%)"] = mental_2["Prevalence in males (%)"].astype(float)
-# It seems that there is a string in the column. It probably means that tehre is another dataframe. I want to check the Position of the string "Suicide rate (deaths per 100,000 individuals)"
-mystery_row_0= mental_2.loc[mental_2["Prevalence in males (%)"] == "Suicide rate (deaths per 100,000 individuals)"]
-mystery_row_0 #starting from row 54276 there is another dataframe, so I have to split mental_2
+mental_2.rename(columns={"Schizophrenia (%)": "Prevalence in males", "Bipolar disorder (%)": "Prevalence in females", "Eating disorders (%)": "Population"}, inplace = True)
 
 index_to_keep1 = range(6469, 54276)
 mental_2 = mental_2.loc[index_to_keep1]
 mental_2 = mental_2.dropna()# Since I am interested in data from Year 1990 to 20017, I simply drop the null values
 mental_2["Year"] = mental_2["Year"].astype(int)
-mental_2["Prevalence in males (%)"] = mental_2["Prevalence in males (%)"].astype(float)
-mental_2["Prevalence in females (%)"] = mental_2["Prevalence in females (%)"].astype(float)
+mental_2["Prevalence in males"] = mental_2["Prevalence in males"].astype(float)
+mental_2["Prevalence in females"] = mental_2["Prevalence in females"].astype(float)
 mental_2["Population"] = mental_2["Population"].astype(float)
 
 mental_2.info() #my data are clean now!
 
 #MENTAL_3
-index_to_keep2 = np.arange(54277, 108553)
-mental_3 = pd.read_csv("Mental_Dataset.csv").loc[index_to_keep2]
-mental_3.info()
-mental_3 = mental_3.drop(["Alcohol use disorders (%)","Depression (%)", "Drug use disorders (%)", "Anxiety disorders (%)", "Entity", "Year"], axis = 1)
-mental_3.rename(columns={"Schizophrenia (%)": "Suicide Rates", "Bipolar disorder (%)": "Depressive Disorder Rates", "Eating disorders (%)": "Population"}, inplace = True)
-
-mental_3 = mental_3.drop(["Code", "index"], axis = 1) # I drop these columns since they would be a repetition in the final
-mental_3['Suicide Rates'] = mental_3['Suicide Rates'].astype(float) #it seems there's another dataset, now I want to discover where it starts
-mystery_row_1= mental_3.loc[mental_3["Suicide Rates"] == "Prevalence - Depressive disorders - Sex: Both - Age: All Ages (Number) (people suffering from depression)"]
-mystery_row_1 # at row 102084 starts the fourth dataset, so I have to consider mental_3 as the original dataset from row 54277 to 102084
 
 true_index = np.arange(54277,102084)
-mental_3 = mental_3.loc[true_index]
+mental_3 = pd.read_csv("Mental_Dataset.csv").loc[true_index]
+mental_3 = mental_3.drop(["Alcohol use disorders (%)","Depression (%)", "Drug use disorders (%)", "Anxiety disorders (%)", "Entity", "Year"], axis = 1)
+mental_3.rename(columns={"Schizophrenia (%)": "Suicide Rates", "Bipolar disorder (%)": "Depressive Disorder Rates", "Eating disorders (%)": "Population"}, inplace = True)
+mental_3 = mental_3.drop(["Code", "index"], axis = 1) 
 mental_3 = mental_3.dropna() # Since I am interested in data from Year 1990 to 2017, I simply drop the null values (that are those from 1800 to 1989)
 mental_3["Year"] = mental_3["Year"].astype(int)
-mental_3["Suicide Rates "] = mental_3["Suicide Rates "].astype(float)
+mental_3["Suicide Rates"] = mental_3["Suicide Rates"].astype(float)
 mental_3["Depressive Disorder Rates"] = mental_3["Depressive Disorder Rates"].astype(float)
 mental_3["Population"] = mental_3["Population"].astype(float)
 mental_3.info() #my data are clean now!
 
-# MENTAL_4
-final_index = np.arange(102084, 108553)
-mental_4 = pd.read_csv("Mental_Dataset.csv").loc[final_index].drop(["Depression (%)", "Alcohol use disorders (%)"], axis=1 )
-mental_4.rename(columns={"Schizophrenia (%)": "Prevalence", "Bipolar disorder (%)": "Depressive Disorder Rates", "Eating disorders (%)": "Sex-Both", "Anxiety disorders (%)":"All Ages", "Drug use disorders (%)": "people suffering from depression"}, inplace = True)
-mental_4.info()
-mental_4.head()
-
-#st.markdown("Going through the dataframe, I realized that it was actually made by 4 independent dataset. I clean all the datasets and I decided to not take into consideration the last dataset since there were many null values and it is ambigous. In order to have the final cleaned dataset, I merged the three datasets horizontally")
+#FINAL DATASET
 
 mental_health_ = pd.merge(mental_1,mental_2)
 mental_health_.head().T
@@ -98,14 +70,14 @@ mental_health_.info()
 mental_health_.index = mental_3.index
 mental_health_final = pd.concat([mental_health_, mental_3], axis=1)
 mental_health_final = mental_health_final.drop(["Population"], axis=1)
-mental_health_final.head().T
+mental_health_final.rename(columns={'Entity': 'Country'}, inplace=True)
 mental_health_final = mental_health_final.drop(["Depressive Disorder Rates"], axis=1)
 mental_health_final.info() # My final dataset is clean!
-mental_health_final["Suicide Rates"] = mental_health_final["Suicide Rates"].astype(float)
-mental_health_final.rename(columns={'Entity': 'Country'}, inplace=True)
 
-#PLOTS: I want to analyze the disorders trend in each European state and then plot the mean of the disorders to see how they are complexly in Europe.
-#st.markdown("At this point of the project I decided to analyze the situation in each European country plotting the trends of the disorders")
+#PLOTS
+
+st.markdown("At this point of the project I decided to analyze the situation in each European country plotting the trends of the disorders")
+
 Austria= mental_health_final.loc[mental_health_final["Country"] == "Austria"]
 Belgium = mental_health_final.loc[mental_health_final["Country"] == "Belgium"]
 Bulgaria= mental_health_final.loc[mental_health_final["Country"] == "Bulgaria"]
@@ -136,11 +108,9 @@ Sweden = mental_health_final.loc[mental_health_final["Country"] == "Sweden"]
 
 #MATPLOT
 
-# I decided to divide the disorders into 2 plots since it is visually more clear to see the trends. I also deicded to plot separately the prevalence in gender.
-
 # AUSTRIA
 years_Austria = Austria["Year"]
-#st.subheader("Austria 1990-2017")
+st.subheader("Austria 1990-2017")
 Austria_fig1 = plt.figure(figsize=(20,20))
 plt.title("Disorders across Austria")
 plt.grid(False) 

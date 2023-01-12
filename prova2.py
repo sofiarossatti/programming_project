@@ -1,14 +1,24 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt 
+import streamlit as st
+import seaborn as sb
 mental_health = pd.read_csv("Mental_Dataset.csv")
 mental_health.info()# I see that there are many null values with different data type. I find it interesting that in the foue columns there are just 6468 values, way much less than the total. First of all, I want to change the object values (that are actually numbers) into floats.
 mental_health.head() 
 
-mental_health["Schizophrenia (%)"] = mental_health["Schizophrenia (%)"].astype(float) 
-#I noticed that there is a problem in the column Schizophrenia (%). Apparentely there is a string in the column! I want to find where is located.
+st.title("European Trends in Mental Health Project")
+st.header("Aim of the project")
+st.markdown("This project aims to study the mental disorders trends across Europe trying to understand possible correlations and future trends. I have worked on dataset which reports many mental disors around the world but I decided to focus on the European situation.\n Since the data provided go from 1990 to 2017, I also wanted to check if the analyzed future trends correspod with the present situation. ")
+
+st.header("Exploring and cleaning the dataset")
+st.markdown("The first thing I did is checking the information of the dataset and I see that there were many null values and numerical values that were indicated as object. Because of that, firstly I wanted to change the object values into floats, starting by the Schizophrenia (%) column. Soon I realized that there is a problem in the column Schizophrenia (%). Apparentely there was a string in the column at row 6468.")
+mental_health["Schizophrenia (%)"] = mental_health["Schizophrenia (%)"].astype(float)
+st.markdown(" I discovered a very interesting thing: there was the possibility that my dataframe is actually made by more datasets put together. To check that the row 6468 contains the keys of a whole new dataframe, I print the following five rows just to be sure of my supposition.")
+st.markdown("As I thought, this is the beginning of a whole new dataset. I have to split mental_health into parts and merge them horizontally (probably the owner has concat them vertically).")
 mystery_row=mental_health.loc[mental_health["Schizophrenia (%)"]== "Prevalence in males (%)"]
-mystery_row # I find a very interesting thing: there is the possibility that my dataframe is actually made by more dataframes put together. To check that the row 6468 is the keys of a whole new dataframe, I print the following five rows just to be sure of my idea.
-mental_health[6468:6473] # As I thought, this is the beginning of a whole new dataset. I have to split mental_health into parts and merge them horizontally (probably the owner has concat them vertically).
+mystery_row 
+mental_health[6468:6473] 
 
 index_to_keep_0 = np.arange(6468)
 mental_1 = pd.read_csv("Mental_Dataset.csv").loc[index_to_keep_0]
@@ -77,9 +87,9 @@ mental_4 = pd.read_csv("Mental_Dataset.csv").loc[final_index].drop(["Depression 
 mental_4.rename(columns={"Schizophrenia (%)": "Prevalence", "Bipolar disorder (%)": "Depressive Disorder Rates", "Eating disorders (%)": "Sex-Both", "Anxiety disorders (%)":"All Ages", "Drug use disorders (%)": "people suffering from depression"}, inplace = True)
 mental_4.info()
 mental_4.head()
-# Observing this dataset, I have realized that it does not offer useful data for my analysis since there are many null values and it is ambigous. Because of that, I'm not going to use it.
 
-#Now that my 3 dataframes are clean I can merge them horizontally
+#st.markdown("Going through the dataframe, I realized that it was actually made by 4 independent dataset. I clean all the datasets and I decided to not take into consideration the last dataset since there were many null values and it is ambigous. In order to have the final cleaned dataset, I merged the three datasets horizontally")
+
 mental_health_ = pd.merge(mental_1,mental_2)
 mental_health_.head().T
 mental_health_['Year'] = mental_health_['Year'].astype(int)
@@ -91,13 +101,11 @@ mental_health_final = mental_health_final.drop(["Population"], axis=1)
 mental_health_final.head().T
 mental_health_final = mental_health_final.drop(["Depressive Disorder Rates"], axis=1)
 mental_health_final.info() # My final dataset is clean!
-
+mental_health_final["Suicide Rates"] = mental_health_final["Suicide Rates"].astype(float)
 mental_health_final.rename(columns={'Entity': 'Country'}, inplace=True)
 
-#PLOTS
-
-# I want to analyze the disorders trend in each European state and then plot the mean of the disorders to see how they are complexly in Europe.
-
+#PLOTS: I want to analyze the disorders trend in each European state and then plot the mean of the disorders to see how they are complexly in Europe.
+#st.markdown("At this point of the project I decided to analyze the situation in each European country plotting the trends of the disorders")
 Austria= mental_health_final.loc[mental_health_final["Country"] == "Austria"]
 Belgium = mental_health_final.loc[mental_health_final["Country"] == "Belgium"]
 Bulgaria= mental_health_final.loc[mental_health_final["Country"] == "Bulgaria"]
@@ -128,10 +136,7 @@ Sweden = mental_health_final.loc[mental_health_final["Country"] == "Sweden"]
 
 #MATPLOT
 
-import matplotlib.pyplot as plt # I decided to divide the disorders into 2 plots since it is visually more clear to see the trends. I also deicded to plot separately the prevalence in gender.
-
-import streamlit as st
-#st.header("European Trends in Mental Health Project")
+# I decided to divide the disorders into 2 plots since it is visually more clear to see the trends. I also deicded to plot separately the prevalence in gender.
 
 # AUSTRIA
 years_Austria = Austria["Year"]
@@ -190,6 +195,10 @@ ax_9_Au.legend()
 ax_10_Au.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Austria.corr(), annot=True)
+plt.show()
 
 # BELGIUM
 
@@ -247,6 +256,11 @@ ax_10_Be.plot(years_Belgium, Belgium["Prevalence in females (%)"], label='Preval
 
 ax_9_Be.legend()
 ax_10_Be.legend()
+plt.show()
+
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Belgium.corr(), annot=True)
 plt.show()
 
 # BULGARIA
@@ -307,6 +321,11 @@ ax_9_Bu.legend()
 ax_10_Bu.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Bulgaria.corr(), annot=True)
+plt.show()
+
 #CYPRUS
 
 years_Cyprus = Cyprus["Year"]
@@ -363,6 +382,11 @@ ax_10_Cy.plot(years_Cyprus, Cyprus["Prevalence in females (%)"], label='Prevalen
 
 ax_9_Cy.legend()
 ax_10_Cy.legend()
+plt.show()
+
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Cyprus.corr(), annot=True)
 plt.show()
 
 #CROATIA
@@ -423,6 +447,11 @@ ax_9_Cro.legend()
 ax_10_Cro.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Croatia.corr(), annot=True)
+plt.show()
+
 # DENMARK
 
 years_Denmark = Denmark["Year"]
@@ -479,6 +508,11 @@ ax_10_Den.plot(years_Denmark, Denmark["Prevalence in females (%)"], label='Preva
 
 ax_9_Den.legend()
 ax_10_Den.legend()
+plt.show()
+
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Denmark.corr(), annot=True)
 plt.show()
 
 # ESTONIA
@@ -539,6 +573,11 @@ ax_9_Est.legend()
 ax_10_Est.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Estonia.corr(), annot=True)
+plt.show()
+
 # FINLAND
 
 years_Finland = Finland["Year"]
@@ -595,6 +634,11 @@ ax_10_Fin.plot(years_Finland,Finland["Prevalence in females (%)"], label='Preval
 
 ax_9_Fin.legend()
 ax_10_Fin.legend()
+plt.show()
+
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Finland.corr(), annot=True)
 plt.show()
 
 # FRANCE
@@ -655,6 +699,11 @@ ax_9_Fr.legend()
 ax_10_Fr.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(France.corr(), annot=True)
+plt.show()
+
 # GERMANY
 
 years_Germany = Germany["Year"]
@@ -713,6 +762,10 @@ ax_9_Ge.legend()
 ax_10_Ge.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Germany.corr(), annot=True)
+plt.show()
 # GREECE
 
 years_Greece = Greece["Year"]
@@ -771,6 +824,10 @@ ax_9_Gr.legend()
 ax_10_Gr.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Greece.corr(), annot=True)
+plt.show()
 # SLOVAKIA
 
 years_Slovakia = Slovakia["Year"]
@@ -829,6 +886,10 @@ ax_9_Slok.legend()
 ax_10_Slok.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Slovakia.corr(), annot=True)
+plt.show()
 # SPAIN
 
 years_Spain = Spain["Year"]
@@ -887,6 +948,10 @@ ax_9_Spa.legend()
 ax_10_Spa.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Spain.corr(), annot=True)
+plt.show()
 # HUNGARY
 
 years_Hungary = Hungary["Year"]
@@ -945,6 +1010,10 @@ ax_9_Hu.legend()
 ax_10_Hu.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Hungary.corr(), annot=True)
+plt.show()
 # IRLANDA
 
 years_Ireland = Ireland["Year"]
@@ -1003,6 +1072,10 @@ ax_9.legend()
 ax_10.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Ireland.corr(), annot=True)
+plt.show()
 #ITALY
 
 years_Italy = Italy["Year"]
@@ -1059,6 +1132,11 @@ ax_10_It.plot(years_Italy,Italy["Prevalence in females (%)"], label='Prevalence 
 
 ax_9_It.legend()
 ax_10_It.legend()
+plt.show()
+
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Italy.corr(), annot=True)
 plt.show()
 
 # LETTONIA
@@ -1119,6 +1197,10 @@ ax_9_Let.legend()
 ax_10_Let.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Latvia.corr(), annot=True)
+plt.show()
 # LITHUANIA
 
 years_Lithuania = Lithuania["Year"]
@@ -1175,6 +1257,11 @@ ax_10_Lit.plot(years_Lithuania,Lithuania["Prevalence in females (%)"], label='Pr
 
 ax_9_Lit.legend()
 ax_10_Lit.legend()
+plt.show()
+
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Lithuania.corr(), annot=True)
 plt.show()
 
 # LUXEMBOURG
@@ -1235,6 +1322,11 @@ ax_9_Lux.legend()
 ax_10_Lux.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Luxembourg.corr(), annot=True)
+plt.show()
+
 # MALTA
 
 years_Malta = Malta["Year"]
@@ -1293,6 +1385,10 @@ ax_9_Ma.legend()
 ax_10_Ma.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Malta.corr(), annot=True)
+plt.show()
 # HOLLAND
 
 years_Netherlands = Netherlands["Year"]
@@ -1349,6 +1445,11 @@ ax_10_Ho.plot(years_Netherlands,Netherlands["Prevalence in females (%)"], label=
 
 ax_9_Ho.legend()
 ax_10_Ho.legend()
+plt.show()
+
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Netherlands.corr(), annot=True)
 plt.show()
 
 # POLAND
@@ -1409,6 +1510,11 @@ ax_9_Pol.legend()
 ax_10_Pol.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Poland.corr(), annot=True)
+plt.show()
+
 # PORTUGAL
 
 years_Portugal = Portugal["Year"]
@@ -1465,6 +1571,11 @@ ax_10_Por.plot(years_Portugal,Portugal["Prevalence in females (%)"], label='Prev
 
 ax_9_Por.legend()
 ax_10_Por.legend()
+plt.show()
+
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Portugal.corr(), annot=True)
 plt.show()
 
 # CZECH REPUBLIC
@@ -1525,8 +1636,12 @@ ax_9_Cz.legend()
 ax_10_Cz.legend()
 plt.show()
 
-# ROMANIA
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Czech_Republic.corr(), annot=True)
+plt.show()
 
+# ROMANIA
 years_Romania = Romania["Year"]
 Romania_fig1 = plt.figure(figsize=(20,20))
 plt.title("Disorders across Romania")
@@ -1583,6 +1698,10 @@ ax_9_Rom.legend()
 ax_10_Rom.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Romania.corr(), annot=True)
+plt.show()
 # SLOVENIA
 
 years_Slovenia = Slovenia["Year"]
@@ -1639,6 +1758,11 @@ ax_10_Slo.plot(years_Slovenia,Slovenia["Prevalence in females (%)"], label='Prev
 
 ax_9_Slo.legend()
 ax_10_Slo.legend()
+plt.show()
+
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Slovenia.corr(), annot=True)
 plt.show()
 
 # SWEDEN
@@ -1699,11 +1823,15 @@ ax_9_Swe.legend()
 ax_10_Swe.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Sweden.corr(), annot=True)
+plt.show()
 
 # Now that I've plotted all the disorders for each European Country, I want to do a mean between all the States in order to see the European disorders trends and check ife there is any type of correlation.
 
 Europe = pd.concat([Austria, Belgium, Bulgaria, Cyprus, Croatia, Denmark, Estonia, Finland, France, Germany, Greece, Slovakia, Spain, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Czech_Republic, Romania, Slovenia, Sweden], axis = 0)
-
+Europe.info()
 # groupby year: I want to create a dataset with the mean values of all the countries
 Europe_df_ = Europe.groupby("Year")
 Europe_df = Europe_df_.mean()
@@ -1767,3 +1895,75 @@ ax_9_EU.legend()
 ax_10_EU.legend()
 plt.show()
 
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(Europe_df.corr(), annot=True)
+plt.show()
+
+#WORLD
+World_df_ = mental_health_final.groupby("Year")
+World_df = World_df_.mean()
+World_df.info()
+World_df.head()
+
+# now I want to plot the World values
+
+W_fig1 = plt.figure(figsize=(20,20))
+plt.title("Disorders across the World")
+plt.grid(False) 
+plt.axis('off')
+
+ax_1_W = W_fig1.add_subplot(2, 2, 1)
+ax_2_W = W_fig1.add_subplot(2, 2, 2)
+ax_3_W = W_fig1.add_subplot(2, 2, 3)
+ax_4_W = W_fig1.add_subplot(2, 2, 4)
+
+ax_1_W.plot(World_df.index, World_df["Schizophrenia (%)"],label='Schizophrenia (%)', color='red', marker = ".")
+ax_2_W.plot(World_df.index, World_df["Bipolar disorder (%)"], label='Bipolar disorder (%)', color="blue", marker = ".")
+ax_3_W.plot(World_df.index, World_df["Eating disorders (%)"], label='Eating disorders (%)', color="green", marker = ".")
+ax_4_W.plot(World_df.index, World_df["Anxiety disorders (%)"], label='Anxiety disorders (%) ', color="orange", marker = ".")
+
+ax_1_W.legend()
+ax_2_W.legend()
+ax_3_W.legend()
+ax_4_W.legend()
+plt.show()
+
+W_fig2 = plt.figure(figsize=(20,20))
+plt.title("Disorders across the World")
+plt.grid(False) 
+plt.axis('off')
+ax_5_W = W_fig2.add_subplot(2, 2, 1)
+ax_6_W = W_fig2.add_subplot(2, 2, 2)
+ax_7_W = W_fig2.add_subplot(2, 2, 3)
+ax_8_W = W_fig2.add_subplot(2, 2, 4)
+
+ax_5_W.plot(World_df.index, World_df["Drug use disorders (%)"], label='Drug use disorders (%)', color="red", marker = ".")
+ax_6_W.plot(World_df.index, World_df["Depression (%)"], label='Depression (%)', color="blue", marker = ".")
+ax_7_W.plot(World_df.index, World_df["Alcohol use disorders (%)"], label='Alcohol use disorders (%)', color="green", marker = ".")
+ax_8_W.plot(World_df.index, World_df["Suicide Rates"], label='Suicide Rates (over 100.000 deaths)', color="orange", marker = ".")
+
+ax_5_W.legend()
+ax_6_W.legend()
+ax_7_W.legend()
+ax_8_W.legend()
+plt.show() 
+
+W_fig3 = plt.figure(figsize=(10,10))
+plt.title("Prevalence in gender")
+plt.grid(False) 
+plt.axis('off')
+ax_9_W = W_fig3.add_subplot(2, 1, 1)
+ax_10_W = W_fig3.add_subplot(2, 1, 2)
+
+ax_9_W.plot(World_df.index, World_df["Prevalence in males (%)"], label='Prevalence in males (%)', color="red", marker = ".")
+ax_10_W.plot(World_df.index, World_df["Prevalence in females (%)"], label='Prevalence in females (%)', color="red", marker = ".")
+
+ax_9_W.legend()
+ax_10_W.legend()
+plt.show()
+
+# correlation
+plt.figure(figsize=(8,6))
+sb.heatmap(World_df.corr(), annot=True)
+plt.show()

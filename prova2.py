@@ -130,9 +130,12 @@ Sweden = mental_health_final.loc[mental_health_final["Country"] == "Sweden"]
 
 import matplotlib.pyplot as plt # I decided to divide the disorders into 2 plots since it is visually more clear to see the trends. I also deicded to plot separately the prevalence in gender.
 
+import streamlit as st
+#st.header("European Trends in Mental Health Project")
+
 # AUSTRIA
 years_Austria = Austria["Year"]
-
+#st.subheader("Austria 1990-2017")
 Austria_fig1 = plt.figure(figsize=(20,20))
 plt.title("Disorders across Austria")
 plt.grid(False) 
@@ -1701,5 +1704,66 @@ plt.show()
 
 Europe = pd.concat([Austria, Belgium, Bulgaria, Cyprus, Croatia, Denmark, Estonia, Finland, France, Germany, Greece, Slovakia, Spain, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Czech_Republic, Romania, Slovenia, Sweden], axis = 0)
 
+# groupby year: I want to create a dataset with the mean values of all the countries
+Europe_df_ = Europe.groupby("Year")
+Europe_df = Europe_df_.mean()
+Europe_df.info()
+Europe_df.head()
 
+# now I want to plot the Europe values
+
+EU_fig1 = plt.figure(figsize=(20,20))
+plt.title("Disorders across Europe")
+plt.grid(False) 
+plt.axis('off')
+
+ax_1_Eu = EU_fig1.add_subplot(2, 2, 1)
+ax_2_Eu = EU_fig1.add_subplot(2, 2, 2)
+ax_3_Eu = EU_fig1.add_subplot(2, 2, 3)
+ax_4_Eu = EU_fig1.add_subplot(2, 2, 4)
+
+ax_1_Eu.plot(Europe_df.index, Europe_df["Schizophrenia (%)"],label='Schizophrenia (%)', color='red', marker = ".")
+ax_2_Eu.plot(Europe_df.index, Europe_df["Bipolar disorder (%)"], label='Bipolar disorder (%)', color="blue", marker = ".")
+ax_3_Eu.plot(Europe_df.index, Europe_df["Eating disorders (%)"], label='Eating disorders (%)', color="green", marker = ".")
+ax_4_Eu.plot(Europe_df.index, Europe_df["Anxiety disorders (%)"], label='Anxiety disorders (%) ', color="orange", marker = ".")
+
+ax_1_Eu.legend()
+ax_2_Eu.legend()
+ax_3_Eu.legend()
+ax_4_Eu.legend()
+plt.show()
+
+EU_fig2 = plt.figure(figsize=(20,20))
+plt.title("Disorders across Europe")
+plt.grid(False) 
+plt.axis('off')
+ax_5_EU = EU_fig2.add_subplot(2, 2, 1)
+ax_6_EU = EU_fig2.add_subplot(2, 2, 2)
+ax_7_EU = EU_fig2.add_subplot(2, 2, 3)
+ax_8_EU = EU_fig2.add_subplot(2, 2, 4)
+
+ax_5_EU.plot(Europe_df.index, Europe_df["Drug use disorders (%)"], label='Drug use disorders (%)', color="red", marker = ".")
+ax_6_EU.plot(Europe_df.index, Europe_df["Depression (%)"], label='Depression (%)', color="blue", marker = ".")
+ax_7_EU.plot(Europe_df.index, Europe_df["Alcohol use disorders (%)"], label='Alcohol use disorders (%)', color="green", marker = ".")
+ax_8_EU.plot(Europe_df.index, Europe_df["Suicide Rates"], label='Suicide Rates (over 100.000 deaths)', color="orange", marker = ".")
+
+ax_5_EU.legend()
+ax_6_EU.legend()
+ax_7_EU.legend()
+ax_8_EU.legend()
+plt.show() 
+
+EU_fig3 = plt.figure(figsize=(10,10))
+plt.title("Prevalence in gender")
+plt.grid(False) 
+plt.axis('off')
+ax_9_EU = EU_fig3.add_subplot(2, 1, 1)
+ax_10_EU = EU_fig3.add_subplot(2, 1, 2)
+
+ax_9_EU.plot(Europe_df.index, Europe_df["Prevalence in males (%)"], label='Prevalence in males (%)', color="red", marker = ".")
+ax_10_EU.plot(Europe_df.index, Europe_df["Prevalence in females (%)"], label='Prevalence in females (%)', color="red", marker = ".")
+
+ax_9_EU.legend()
+ax_10_EU.legend()
+plt.show()
 

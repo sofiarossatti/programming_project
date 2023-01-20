@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import streamlit as st
 import seaborn as sb
+#import tapby
 mental_health = pd.read_csv("Mental_Dataset.csv") 
 
 st.title("European Trends in Mental Health Project")
@@ -16,7 +17,7 @@ st.markdown("As I thought, this is the beginning of a whole new dataset. I have 
 
 index_to_keep_0 = np.arange(6468)
 mental_1 = pd.read_csv("Mental_Dataset.csv").loc[index_to_keep_0]
-index_to_keep = np.arange(6469,108553)
+index_to_keep = np.arange(6469, 54276)
 mental_2 = pd.read_csv("Mental_Dataset.csv").loc[index_to_keep]
 
 # MENTAL_1
@@ -35,8 +36,6 @@ mental_2.head()
 mental_2 = mental_2.drop(["Alcohol use disorders (%)","Depression (%)", "Drug use disorders (%)", "Anxiety disorders (%)", "Code", "index"], axis = 1)
 mental_2.rename(columns={"Schizophrenia (%)": "Prevalence in males", "Bipolar disorder (%)": "Prevalence in females", "Eating disorders (%)": "Population"}, inplace = True)
 
-index_to_keep1 = range(6469, 54276)
-mental_2 = mental_2.loc[index_to_keep1]
 mental_2 = mental_2.dropna()
 mental_2["Year"] = mental_2["Year"].astype(int)
 mental_2["Prevalence in males"] = mental_2["Prevalence in males"].astype(float)
@@ -73,922 +72,958 @@ mental_health_final = mental_health_final.drop(["Depressive Disorder Rates"], ax
 mental_health_final["Suicide Rates"] = (mental_health_final["Suicide Rates"]/100000*100)
 
 mental_health_final.info() # My final dataset is clean!
+mental_health_final.to_csv('mental_health_final.csv', index=False)
 
 #PLOTS
 
 st.markdown("At this point of the project I decided to analyze the situation in each European country plotting the trends of the disorders")
 
-Austria= mental_health_final.loc[mental_health_final["Country"] == "Austria"]
-Belgium = mental_health_final.loc[mental_health_final["Country"] == "Belgium"]
-Bulgaria= mental_health_final.loc[mental_health_final["Country"] == "Bulgaria"]
-Cyprus = mental_health_final.loc[mental_health_final["Country"] == "Cyprus"]
-Croatia = mental_health_final.loc[mental_health_final["Country"] == "Croatia"]
-Denmark = mental_health_final.loc[mental_health_final["Country"] == "Denmark"]
-Estonia = mental_health_final.loc[mental_health_final["Country"] == "Estonia"]
-Finland = mental_health_final.loc[mental_health_final["Country"] == "Finland"]
-France = mental_health_final.loc[mental_health_final["Country"] == "France"]
-Germany = mental_health_final.loc[mental_health_final["Country"] == "Germany"]
-Greece = mental_health_final.loc[mental_health_final["Country"] == "Greece"]
-Slovakia = mental_health_final.loc[mental_health_final["Country"] == "Slovakia"]
-Spain = mental_health_final.loc[mental_health_final["Country"] == "Spain"]
-Hungary = mental_health_final.loc[mental_health_final["Country"] == "Hungary"]
-Ireland = mental_health_final.loc[mental_health_final["Country"] == "Ireland"]
-Italy = mental_health_final.loc[mental_health_final["Country"] == "Italy"]
-Latvia = mental_health_final.loc[mental_health_final["Country"] == "Latvia"]
-Lithuania = mental_health_final.loc[mental_health_final["Country"] == "Lithuania"]
-Luxembourg = mental_health_final.loc[mental_health_final["Country"] == "Luxembourg"]
-Malta = mental_health_final.loc[mental_health_final["Country"] == "Malta"]
-Netherlands = mental_health_final.loc[mental_health_final["Country"] == "Netherlands"]
-Poland = mental_health_final.loc[mental_health_final["Country"] == "Poland"]
-Portugal = mental_health_final.loc[mental_health_final["Country"] == "Portugal"]
-Czech_Republic= mental_health_final.loc[mental_health_final["Country"] == "Czech Republic"]
-Romania = mental_health_final.loc[mental_health_final["Country"] == "Romania"]
-Slovenia = mental_health_final.loc[mental_health_final["Country"] == "Slovenia"]
-Sweden = mental_health_final.loc[mental_health_final["Country"] == "Sweden"]
+Austria= mental_health_final.loc[mental_health_final["Country"] == "Austria"].set_index("Year")
+Belgium = mental_health_final.loc[mental_health_final["Country"] == "Belgium"].set_index("Year")
+Bulgaria= mental_health_final.loc[mental_health_final["Country"] == "Bulgaria"].set_index("Year")
+Cyprus = mental_health_final.loc[mental_health_final["Country"] == "Cyprus"].set_index("Year")
+Croatia = mental_health_final.loc[mental_health_final["Country"] == "Croatia"].set_index("Year")
+Denmark = mental_health_final.loc[mental_health_final["Country"] == "Denmark"].set_index("Year")
+Estonia = mental_health_final.loc[mental_health_final["Country"] == "Estonia"].set_index("Year")
+Finland = mental_health_final.loc[mental_health_final["Country"] == "Finland"].set_index("Year")
+France = mental_health_final.loc[mental_health_final["Country"] == "France"].set_index("Year")
+Germany = mental_health_final.loc[mental_health_final["Country"] == "Germany"].set_index("Year")
+Greece = mental_health_final.loc[mental_health_final["Country"] == "Greece"].set_index("Year")
+Slovakia = mental_health_final.loc[mental_health_final["Country"] == "Slovakia"].set_index("Year")
+Spain = mental_health_final.loc[mental_health_final["Country"] == "Spain"].set_index("Year")
+Hungary = mental_health_final.loc[mental_health_final["Country"] == "Hungary"].set_index("Year")
+Ireland = mental_health_final.loc[mental_health_final["Country"] == "Ireland"].set_index("Year")
+Italy = mental_health_final.loc[mental_health_final["Country"] == "Italy"].set_index("Year")
+Latvia = mental_health_final.loc[mental_health_final["Country"] == "Latvia"].set_index("Year")
+Lithuania = mental_health_final.loc[mental_health_final["Country"] == "Lithuania"].set_index("Year")
+Luxembourg = mental_health_final.loc[mental_health_final["Country"] == "Luxembourg"].set_index("Year")
+Malta = mental_health_final.loc[mental_health_final["Country"] == "Malta"].set_index("Year")
+Netherlands = mental_health_final.loc[mental_health_final["Country"] == "Netherlands"].set_index("Year")
+Poland = mental_health_final.loc[mental_health_final["Country"] == "Poland"].set_index("Year")
+Portugal = mental_health_final.loc[mental_health_final["Country"] == "Portugal"].set_index("Year")
+Czech_Republic= mental_health_final.loc[mental_health_final["Country"] == "Czech Republic"].set_index("Year")
+Romania = mental_health_final.loc[mental_health_final["Country"] == "Romania"].set_index("Year")
+Slovenia = mental_health_final.loc[mental_health_final["Country"] == "Slovenia"].set_index("Year")
+Sweden = mental_health_final.loc[mental_health_final["Country"] == "Sweden"].set_index("Year")
 
-#MATPLOT
+# STREAMLIT SETTINGS
+# sidebar
+countries_dict = {"Austria":Austria, "Belgium":Belgium, "Bulgaria":Bulgaria, "Cyprus": Cyprus, "Croatia":Croatia, "Denmark":Denmark, "Estonia":Estonia, "Finland":Finland, "France":France, "Germany":Germany, "Greece":Greece, "Slovakia":Slovakia, "Spain":Spain, "Hungary":Hungary, "Ireland":Ireland, "Italy":Italy, "Latvia":Latvia, "Lithuania":Lithuania, "Luxembourg":Luxembourg, "Malta":Malta, "Netherlands":Netherlands, "Poland":Poland, "Portugal":Portugal, "Czech Republic":Czech_Republic, "Romania":Romania, "Slovenia":Slovenia,"Sweden": Sweden}
+st.sidebar.title("Plots")
+
+for country in countries_dict.keys():
+    if st.sidebar.button(country):
+        st.subheader(f"Disorders across {country} 1990-2017")
+
+#PLOTS, SUBHEADERS, TABS AND EXAPNDERS
+colors=['blue','red','green','purple','orange','brown','pink','gray']
 
 # AUSTRIA
-st.subheader("Disorders across Austria 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
-axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Austria.loc[:,~Austria.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
-
+figAU, axsAU = plt.subplots(4, 2, figsize=(8,15))
+axs = axsAU.ravel()
+columns_to_plot = Austria.loc[:,~Austria.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Austria.iloc[:,1],Austria[col],'o-',color=colors[i])
+    axs[i].plot(Austria.index, Austria[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
+    plt.tight_layout()
 
 # PREVALENCE DISTRIBUTION
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
+for i, col in enumerate(Belgium.columns[8:10]):
+    axs[i].plot(Austria.index, Austria[col],'o-',color="red")
+    axs[i].set_title(col)
+    axs[i].set_xlabel('years')
+    axs[i].set_ylabel('percentage')
+    plt.tight_layout()
 
-for i, col in enumerate(Austria.columns[9:11]):
-    axs[i].plot(Austria.iloc[:,1],Austria[col],'o-',color="red")
+st.subheader("Disorders across Austria 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figAU)
+    st.write("As it can be seen from the plots, Schizophrenia and Eating disords grew significantly in the last years, whereas the other disorders decreased. Although the drug use disorder is still high, from the 2018 until 2017 it slowly decreased.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(fig)
+    st.write("Fortunately, the number of both the females and males affected by any kind of disorders is strictly decreased.")
+with st.expander("Correlation between disorders"):
+    fig_corr = plt.figure(figsize=(6,5))
+    sb.heatmap(Austria.corr(), annot=True)
+    st.pyplot(fig_corr)
+    st.write("The heatmap above shows the correlation between each disorders. It is also interesting to check how the gender is correlated to each disorder.")
+
+#BELGIUM
+
+figBE, axsBE = plt.subplots(4, 2, figsize=(8, 15))
+axsBE = axsBE.ravel()
+columns_to_plot = Belgium.loc[:,~Belgium.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
+for i, col in enumerate(columns_to_plot):
+    axsBE[i].plot(Belgium.index,Belgium[col],'o-',color=colors[i])
+    axsBE[i].set_title(col)
+    axsBE[i].set_xlabel('years')
+    axsBE[i].set_ylabel('percentage')
+plt.tight_layout()
+
+# PREVALENCE DISTRIBUTION
+fig, axs = plt.subplots(1, 2, figsize=(10,5))
+axs = axs.ravel()
+for i, col in enumerate(Austria.columns[8:10]):
+    axs[i].plot(Belgium.index,Belgium[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
-
-# correlation
-plt.figure(figsize=(8,6))
-sb.heatmap(Austria.corr(), annot=True)
-plt.show()
-
-# BELGIUM
 
 st.subheader("Disorders across Belgium 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
-axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Belgium.loc[:,~Belgium.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
-
-for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Belgium.iloc[:,1],Belgium[col],'o-',color=colors[i])
-    axs[i].set_title(col)
-    axs[i].set_xlabel('years')
-    axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
-
-# PREVALENCE DISTRIBUTION
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
-axs = axs.ravel()
-
-for i, col in enumerate(Austria.columns[9:11]):
-    axs[i].plot(Belgium.iloc[:,1],Belgium[col],'o-',color="red")
-    axs[i].set_title(col)
-    axs[i].set_xlabel('years')
-    axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
-
-# correlation
-plt.figure(figsize=(8,6))
-sb.heatmap(Belgium.corr(), annot=True)
-plt.show()
+with st.expander("Plots of the disorders"):
+    st.pyplot(figBE)
+    st.write("As it can be seen from the plots, Schizophrenia and Eating disords grew significantly in the last years, whereas the other disorders decreased. Although the drug use disorder is still high, from the 2018 until 2017 it slowly decreased.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(fig)
+    st.write("Fortunately, the number of both the females and males affected by any kind of disorders is strictly decreased.")
+with st.expander("Correlation between disorders"):
+    fig_corr1= plt.figure(figsize=(8,6))
+    sb.heatmap(Belgium.corr(), annot=True)
+    st.pyplot(fig_corr1)
 
 # BULGARIA
+figBU, axs = plt.subplots(4, 2, figsize=(8, 15))
+axs = axs.ravel()
+colors=['blue','red','green','purple','orange','brown','pink','gray']
+columns_to_plot = Bulgaria.loc[:,~Bulgaria.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
+for i, col in enumerate(columns_to_plot):
+    axs[i].plot(Bulgaria.index,Bulgaria[col],'o-',color=colors[i])
+    axs[i].set_title(col)
+    axs[i].set_xlabel('years')
+    axs[i].set_ylabel('percentage')
+plt.tight_layout()
+
+# PREVALENCE DISTRIBUTION
+figBU1, axs = plt.subplots(1, 2, figsize=(10,5))
+axs = axs.ravel()
+for i, col in enumerate(Bulgaria.columns[8:10]):
+    axs[i].plot(Bulgaria.index,Bulgaria[col],'o-',color="red")
+    axs[i].set_title(col)
+    axs[i].set_xlabel('years')
+    axs[i].set_ylabel('percentage')
+plt.tight_layout()
 
 st.subheader("Disorders across Bulgaria 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
-axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Bulgaria.loc[:,~Bulgaria.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
-
-for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Bulgaria.iloc[:,1],Bulgaria[col],'o-',color=colors[i])
-    axs[i].set_title(col)
-    axs[i].set_xlabel('years')
-    axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
-
-# PREVALENCE DISTRIBUTION
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
-axs = axs.ravel()
-
-for i, col in enumerate(Bulgaria.columns[9:11]):
-    axs[i].plot(Bulgaria.iloc[:,1],Bulgaria[col],'o-',color="red")
-    axs[i].set_title(col)
-    axs[i].set_xlabel('years')
-    axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
-
-# correlation
-plt.figure(figsize=(8,6))
-sb.heatmap(Bulgaria.corr(), annot=True)
-plt.show()
+with st.expander("Plots of the disorders"):
+    st.pyplot(figBU)
+    st.write("As we can see from the graph, there is a steady increase in many disorders, such as Schizophrenia, Bipolarism, Anxienty, Drug abuse and Eating disorders. Whereas for depression and suicide rates is the opposite situation. It is a slightly decrease in Alchool abuse from 2010.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figBU1)
+    st.write("The prevalence in gender follows the same decreasing trend in both females and males.")
+with st.expander("Correlation between disorders"):
+    j = plt.figure(figsize=(8,6))
+    sb.heatmap(Bulgaria.corr(), annot=True)
+    st.pyplot(j)
+    st.write()
 
 #CYPRUS
+st.subheader("Disorders across Cyprus 1990-2017")
+figCY, axs = plt.subplots(4, 2, figsize=(8, 15))
+axs = axs.ravel()
+colors=['blue','red','green','purple','orange','brown','pink','gray']
+columns_to_plot = Cyprus.loc[:,~Cyprus.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
+for i, col in enumerate(columns_to_plot):
+    axs[i].plot(Cyprus.index,Cyprus[col],'o-',color=colors[i])
+    axs[i].set_title(col)
+    axs[i].set_xlabel('years')
+    axs[i].set_ylabel('percentage')
+plt.tight_layout()
+
+# PREVALENCE DISTRIBUTION
+figCY1, axs = plt.subplots(1, 2, figsize=(10,5))
+axs = axs.ravel()
+for i, col in enumerate(Cyprus.columns[8:10]):
+    axs[i].plot(Cyprus.index,Cyprus[col],'o-',color="red")
+    axs[i].set_title(col)
+    axs[i].set_xlabel('years')
+    axs[i].set_ylabel('percentage')
+plt.tight_layout()
 
 st.subheader("Disorders across Cyprus 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
-axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Cyprus.loc[:,~Cyprus.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
-
-for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Cyprus.iloc[:,1],Cyprus[col],'o-',color=colors[i])
-    axs[i].set_title(col)
-    axs[i].set_xlabel('years')
-    axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
-
-# PREVALENCE DISTRIBUTION
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
-axs = axs.ravel()
-
-for i, col in enumerate(Cyprus.columns[9:11]):
-    axs[i].plot(Cyprus.iloc[:,1],Cyprus[col],'o-',color="red")
-    axs[i].set_title(col)
-    axs[i].set_xlabel('years')
-    axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
-
-# correlation
-plt.figure(figsize=(8,6))
-sb.heatmap(Cyprus.corr(), annot=True)
-plt.show()
+with st.expander("Plots of the disorders"):
+    st.pyplot(figCY)
+    st.write("As it can be seen from the plots, Schizophrenia and Eating disords grew significantly in the last years, whereas the other disorders decreased. Although the drug use disorder is still high, from the 2018 until 2017 it slowly decreased.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figCY1)
+    st.write("Fortunately, the number of both the females and males affected by any kind of disorders is strictly decreased.")
+with st.expander("Correlation between disorders"):
+    a= plt.figure(figsize=(8,6))
+    sb.heatmap(Cyprus.corr(), annot=True)
+    st.pyplot(a)
 
 #CROATIA
-
 st.subheader("Disorders across Croatia 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Croatia.loc[:,~Croatia.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Croatia.loc[:,~Croatia.columns.isin(['Country', 'Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Croatia.iloc[:,1],Croatia[col],'o-',color=colors[i])
+    axs[i].plot(Croatia.index,Croatia[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Croatia.columns[9:11]):
-    axs[i].plot(Croatia.iloc[:,1],Croatia[col],'o-',color="red")
+for i, col in enumerate(Croatia.columns[8:10]):
+    axs[i].plot(Croatia.index,Croatia[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+q = plt.figure(figsize=(8,6))
 sb.heatmap(Croatia.corr(), annot=True)
 plt.show()
+st.pyplot(q)
 
 # DENMARK
 
 st.subheader("Disorders across Denmark 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Denmark.loc[:,~Denmark.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Denmark.loc[:,~Denmark.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Denmark.iloc[:,1],Denmark[col],'o-',color=colors[i])
+    axs[i].plot(Denmark.index,Denmark[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Denmark.columns[9:11]):
-    axs[i].plot(Denmark.iloc[:,1],Denmark[col],'o-',color="red")
+for i, col in enumerate(Denmark.columns[8:10]):
+    axs[i].plot(Denmark.index,Denmark[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+w =  plt.figure(figsize=(8,6))
 sb.heatmap(Denmark.corr(), annot=True)
-plt.show()
+st.pyplot(w)
 
 # ESTONIA
-
 st.subheader("Disorders across Estonia 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Estonia.loc[:,~Estonia.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Estonia.loc[:,~Estonia.columns.isin(['Country', 'Year', 'Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Estonia.iloc[:,1],Estonia[col],'o-',color=colors[i])
+    axs[i].plot(Estonia.index,Estonia[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Estonia.columns[9:11]):
-    axs[i].plot(Estonia.iloc[:,1],Estonia[col],'o-',color="red")
+for i, col in enumerate(Estonia.columns[8:10]):
+    axs[i].plot(Estonia.index,Estonia[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+e = plt.figure(figsize=(8,6))
 sb.heatmap(Estonia.corr(), annot=True)
-plt.show()
+st.pyplot(e)
 
 # FINLAND
-
 st.subheader("Disorders across Finland 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Finland.loc[:,~Finland.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Finland.loc[:,~Finland.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Finland.iloc[:,1],Finland[col],'o-',color=colors[i])
+    axs[i].plot(Finland.index,Finland[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Finland.columns[9:11]):
-    axs[i].plot(Finland.iloc[:,1],Finland[col],'o-',color="red")
+for i, col in enumerate(Finland.columns[8:10]):
+    axs[i].plot(Finland.index, Finland[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+R = plt.figure(figsize=(8,6))
 sb.heatmap(Finland.corr(), annot=True)
-plt.show()
+st.pyplot(R)
 
 # FRANCE
-
 st.subheader("Disorders across France 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = France.loc[:,~France.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = France.loc[:,~France.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(France.iloc[:,1],France[col],'o-',color=colors[i])
+    axs[i].plot(France.index, France[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(France.columns[9:11]):
-    axs[i].plot(France.iloc[:,1],France[col],'o-',color="red")
+for i, col in enumerate(France.columns[8:10]):
+    axs[i].plot(France.index,France[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+t= plt.figure(figsize=(8,6))
 sb.heatmap(France.corr(), annot=True)
-plt.show()
+st.pyplot(t)
 
 # GERMANY
-
 st.subheader("Disorders across Germany 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Germany.loc[:,~Germany.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Germany.loc[:,~Germany.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Germany.iloc[:,1],Germany[col],'o-',color=colors[i])
+    axs[i].plot(Germany.index,Germany[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Germany.columns[9:11]):
-    axs[i].plot(Germany.iloc[:,1],Germany[col],'o-',color="red")
+for i, col in enumerate(Germany.columns[8:10]):
+    axs[i].plot(Germany.index, Germany[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+u = plt.figure(figsize=(8,6))
 sb.heatmap(Germany.corr(), annot=True)
-plt.show()
+st.pyplot(u)
 
 # GREECE
-
 st.subheader("Disorders across Greece 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Greece.loc[:,~Greece.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Greece.loc[:,~Greece.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Greece.iloc[:,1],Greece[col],'o-',color=colors[i])
+    axs[i].plot(Greece.index,Greece[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Greece.columns[9:11]):
-    axs[i].plot(Greece.iloc[:,1],Greece[col],'o-',color="red")
+    axs[i].plot(Greece.index,Greece[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+I=plt.figure(figsize=(8,6))
 sb.heatmap(Greece.corr(), annot=True)
-plt.show()
+st.pyplot(I)
 
 # SLOVAKIA
-
 st.subheader("Disorders across Slovakia 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Slovakia.loc[:,~Slovakia.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Slovakia.loc[:,~Slovakia.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Slovakia.iloc[:,1],Slovakia[col],'o-',color=colors[i])
+    axs[i].plot(Slovakia.index,Slovakia[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Slovakia.columns[9:11]):
-    axs[i].plot(Slovakia.iloc[:,1],Slovakia[col],'o-',color="red")
+for i, col in enumerate(Slovakia.columns[8:10]):
+    axs[i].plot(Slovakia.index,Slovakia[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+o=plt.figure(figsize=(8,6))
 sb.heatmap(Slovakia.corr(), annot=True)
-plt.show()
+st.pyplot(o)
 
 # SPAIN
-
 st.subheader("Disorders across Spain 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Spain.loc[:,~Spain.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Spain.loc[:,~Spain.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Spain.iloc[:,1],Spain[col],'o-',color=colors[i])
+    axs[i].plot(Spain.index,Spain[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Spain.columns[9:11]):
-    axs[i].plot(Spain.iloc[:,1],Spain[col],'o-',color="red")
+for i, col in enumerate(Spain.columns[8:10]):
+    axs[i].plot(Spain.index,Spain[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+P=plt.figure(figsize=(8,6))
 sb.heatmap(Spain.corr(), annot=True)
-plt.show()
+st.pyplot(P)
 
 # HUNGARY
-
 st.subheader("Disorders across Hungary 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Hungary.loc[:,~Hungary.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Hungary.loc[:,~Hungary.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Hungary.iloc[:,1],Hungary[col],'o-',color=colors[i])
+    axs[i].plot(Hungary.index,Hungary[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Hungary.columns[9:11]):
-    axs[i].plot(Hungary.iloc[:,1],Hungary[col],'o-',color="red")
+for i, col in enumerate(Hungary.columns[8:10]):
+    axs[i].plot(Hungary.index,Hungary[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+A= plt.figure(figsize=(8,6))
 sb.heatmap(Hungary.corr(), annot=True)
-plt.show()
+st.pyplot(A)
 
 # IRELAND
-
 st.subheader("Disorders across Ireland 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Ireland.loc[:,~Ireland.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Ireland.loc[:,~Ireland.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Ireland.iloc[:,1],Ireland[col],'o-',color=colors[i])
+    axs[i].plot(Ireland.index,Ireland[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Ireland.columns[9:11]):
-    axs[i].plot(Ireland.iloc[:,1],Ireland[col],'o-',color="red")
+for i, col in enumerate(Ireland.columns[8:10]):
+    axs[i].plot(Ireland.index,Ireland[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+F= plt.figure(figsize=(8,6))
 sb.heatmap(Ireland.corr(), annot=True)
-plt.show()
+st.pyplot(F)
 
 #ITALY
-
 st.subheader("Disorders across Italy 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Italy.loc[:,~Italy.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Italy.loc[:,~Italy.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Italy.iloc[:,1],Italy[col],'o-',color=colors[i])
+    axs[i].plot(Italy.index,Italy[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Italy.columns[9:11]):
-    axs[i].plot(Italy.iloc[:,1],Italy[col],'o-',color="red")
+for i, col in enumerate(Italy.columns[8:10]):
+    axs[i].plot(Italy.index,Italy[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+S= plt.figure(figsize=(8,6))
 sb.heatmap(Italy.corr(), annot=True)
-plt.show()
+st.pyplot(S)
 
 # LATVIA
-
 st.subheader("Disorders across Latvia 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Latvia.loc[:,~Latvia.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Latvia.loc[:,~Latvia.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Latvia.iloc[:,1],Latvia[col],'o-',color=colors[i])
+    axs[i].plot(Latvia.index,Latvia[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Latvia.columns[9:11]):
-    axs[i].plot(Latvia.iloc[:,1],Latvia[col],'o-',color="red")
+for i, col in enumerate(Latvia.columns[8:10]):
+    axs[i].plot(Latvia.index,Latvia[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+F= plt.figure(figsize=(8,6))
 sb.heatmap(Latvia.corr(), annot=True)
-plt.show()
+st.pyplot(F)
 
 # LITHUANIA
-
 st.subheader("Disorders across Lithuania 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Lithuania.loc[:,~Lithuania.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Lithuania.loc[:,~Lithuania.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Lithuania.iloc[:,1],Lithuania[col],'o-',color=colors[i])
+    axs[i].plot(Lithuania.index,Lithuania[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
-for i, col in enumerate(Lithuania.columns[9:11]):
-    axs[i].plot(Lithuania.iloc[:,1],Lithuania[col],'o-',color="red")
+for i, col in enumerate(Lithuania.columns[8:10]):
+    axs[i].plot(Lithuania.index,Lithuania[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+h=plt.figure(figsize=(8,6))
 sb.heatmap(Lithuania.corr(), annot=True)
-plt.show()
+st.pyplot(h)
 
 # LUXEMBOURG
-
 st.subheader("Disorders across Luxembourg 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Luxembourg.loc[:,~Luxembourg.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Luxembourg.loc[:,~Luxembourg.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Luxembourg.iloc[:,1],Luxembourg[col],'o-',color=colors[i])
+    axs[i].plot(Luxembourg.index,Luxembourg[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
 for i, col in enumerate(Luxembourg.columns[9:11]):
-    axs[i].plot(Luxembourg.iloc[:,1],Luxembourg[col],'o-',color="red")
+    axs[i].plot(Luxembourg.index,Luxembourg[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+J=plt.figure(figsize=(8,6))
 sb.heatmap(Malta.corr(), annot=True)
-plt.show()
-# HOLLAND
+st.pyplot(J)
 
+# HOLLAND
 st.subheader("Disorders across Netherlands 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Netherlands.loc[:,~Netherlands.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Netherlands.loc[:,~Netherlands.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Netherlands.iloc[:,1],Netherlands[col],'o-',color=colors[i])
+    axs[i].plot(Netherlands.index,Netherlands[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Netherlands.columns[9:11]):
-    axs[i].plot(Netherlands.iloc[:,1],Netherlands[col],'o-',color="red")
+for i, col in enumerate(Netherlands.columns[8:10]):
+    axs[i].plot(Netherlands.index,Netherlands[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+L= plt.figure(figsize=(8,6))
 sb.heatmap(Netherlands.corr(), annot=True)
-plt.show()
+st.pyplot(L)
 
 # POLAND
 
 st.subheader("Disorders across Poland 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Poland.loc[:,~Poland.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Poland.loc[:,~Poland.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Poland.iloc[:,1],Poland[col],'o-',color=colors[i])
+    axs[i].plot(Poland.index,Poland[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Poland.columns[9:11]):
-    axs[i].plot(Poland.iloc[:,1],Poland[col],'o-',color="red")
+for i, col in enumerate(Poland.columns[8:10]):
+    axs[i].plot(Poland.index,Poland[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+Z=plt.figure(figsize=(8,6))
 sb.heatmap(Poland.corr(), annot=True)
-plt.show()
+st.pyplot(Z)
 
 # PORTUGAL
-Portugal.info()
 st.subheader("Disorders across Portugal 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Portugal.loc[:,~Portugal.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Portugal.loc[:,~Portugal.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Portugal.iloc[:,1],Portugal[col],'o-',color=colors[i])
+    axs[i].plot(Portugal.index,Portugal[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Portugal.columns[9:11]):
-    axs[i].plot(Portugal.iloc[:,1],Portugal[col],'o-',color="red")
+for i, col in enumerate(Portugal.columns[8:10]):
+    axs[i].plot(Portugal.index,Portugal[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+v=plt.figure(figsize=(8,6))
 sb.heatmap(Portugal.corr(), annot=True)
-plt.show()
+st.pyplot(v)
 
 # CZECH REPUBLIC
 
 st.subheader("Disorders across Czech Republic 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Czech_Republic.loc[:,~Czech_Republic.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Czech_Republic.loc[:,~Czech_Republic.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Czech_Republic.iloc[:,1],Czech_Republic[col],'o-',color=colors[i])
+    axs[i].plot(Czech_Republic.index,Czech_Republic[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Czech_Republic.columns[9:11]):
-    axs[i].plot(Czech_Republic.iloc[:,1],Czech_Republic[col],'o-',color="red")
+for i, col in enumerate(Czech_Republic.columns[8:10]):
+    axs[i].plot(Czech_Republic.index,Czech_Republic[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+m=plt.figure(figsize=(8,6))
 sb.heatmap(Czech_Republic.corr(), annot=True)
-plt.show()
+st.pyplot(m)
 
 # ROMANIA
 
 st.subheader("Disorders across Romania 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Romania.loc[:,~Romania.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Romania.loc[:,~Romania.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Romania.iloc[:,1],Romania[col],'o-',color=colors[i])
+    axs[i].plot(Romania.index,Romania[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Romania.columns[9:11]):
-    axs[i].plot(Romania.iloc[:,1],Romania[col],'o-',color="red")
+for i, col in enumerate(Romania.columns[8:10]):
+    axs[i].plot(Romania.index,Romania[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+N=plt.figure(figsize=(8,6))
 sb.heatmap(Romania.corr(), annot=True)
-plt.show()
+st.pyplot(N)
 
 # SLOVENIA
 
 st.subheader("Disorders across Slovenia 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Slovenia.loc[:,~Slovenia.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Slovenia.loc[:,~Slovenia.columns.isin(['Country', 'Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Slovenia.iloc[:,1],Slovenia[col],'o-',color=colors[i])
+    axs[i].plot(Slovenia.index,Slovenia[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
-for i, col in enumerate(Slovenia.columns[9:11]):
-    axs[i].plot(Slovenia.iloc[:,1],Slovenia[col],'o-',color="red")
+for i, col in enumerate(Slovenia.columns[8:10]):
+    axs[i].plot(Slovenia.index,Slovenia[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+f=plt.figure(figsize=(8,6))
 sb.heatmap(Slovenia.corr(), annot=True)
-plt.show()
+st.pyplot(f)
 
 # SWEDEN
-
 st.subheader("Disorders across Sweden 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
+fig, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Sweden.loc[:,~Sweden.columns.isin(['Country', 'Year', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Sweden.loc[:,~Sweden.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Sweden.iloc[:,1],Sweden[col],'o-',color=colors[i])
+    axs[i].plot(Sweden.index,Sweden[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
+st.markdown(":red[PREVALENCE IN GENDER]")
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 
-for i, col in enumerate(Sweden.columns[9:11]):
-    axs[i].plot(Sweden.iloc[:,1],Sweden[col],'o-',color="red")
+for i, col in enumerate(Sweden.columns[8:10]):
+    axs[i].plot(Sweden.index,Sweden[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
 
 # correlation
-plt.figure(figsize=(8,6))
+st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
+z=plt.figure(figsize=(8,6))
 sb.heatmap(Sweden.corr(), annot=True)
-plt.show()
+st.pyplot(z)
 
 #EUROPE
 
@@ -1007,7 +1042,7 @@ fig, axs = plt.subplots(4, 2, figsize=(20, 20))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = Europe_df.loc[:,~Europe_df.columns.isin(['Country', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = Europe_df.loc[:,~Europe_df.columns.isin(['Country', 'Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Europe_df.index,Europe_df[col],'o-',color=colors[i])
@@ -1046,7 +1081,7 @@ fig, axs = plt.subplots(4, 2, figsize=(20, 20))
 axs = axs.ravel()
 
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = World_df.loc[:,~World_df.columns.isin(['Country', 'Prevalence in males (%)', 'Prevalence in females (%)'])]
+columns_to_plot = World_df.loc[:,~World_df.columns.isin(['Country', 'Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(World_df.index,World_df[col],'o-',color=colors[i])
@@ -1072,3 +1107,4 @@ plt.show()
 plt.figure(figsize=(8,6))
 sb.heatmap(World_df.corr(), annot=True)
 plt.show()
+

@@ -8,12 +8,9 @@ mental_health = pd.read_csv("Mental_Dataset.csv")
 
 st.title("European Trends in Mental Health Project")
 st.header("Aim of the project")
-st.markdown("This project aims to study the mental disorders trends across Europe trying to understand possible correlations and future trends. I have worked on dataset which reports many mental disors around the world but I decided to focus on the European situation.\n Since the data provided go from 1990 to 2017, I also wanted to check if the analyzed future trends correspod with the present situation. ")
-
+st.markdown("I worked on a dataset which offers a global vision of mental health disorders between 1990 and 2017 and I decided to focus my attention on the European situation. This project recurs to understand correlation between mental diseases inside each European Country. At the end of the presentation I would like to present, thanks to a cluster modelling, the similarities between the States mapping them geographically.")
 st.header("Exploring and cleaning the dataset")
-st.markdown("The first thing I did is checking the information of the dataset and I see that there were many null values and numerical values that were indicated as object. Because of that, firstly I wanted to change the object values into floats, starting by the Schizophrenia (%) column. Soon I realized that there is a problem in the column Schizophrenia (%). Apparentely there was a string in the column at row 6468.")
-st.markdown(" I discovered a very interesting thing: there was the possibility that my dataframe is actually made by more datasets put together. To check that the row 6468 contains the keys of a whole new dataframe, I print the following five rows just to be sure of my supposition.")
-st.markdown("As I thought, this is the beginning of a whole new dataset. I have to split mental_health into parts and merge them horizontally (probably the owner has concat them vertically).")
+st.markdown("Firstly, I began by looking at the dataset information and I saw that there was many null values and many different type, mainly regarded as object. I started by changing  theses values into floats. Soon I realized that there is a problem in the Schizophrenia (%) column: apparently there was a string in the column at row 6468.  Working on data, I  discovered that the dataset offered by Kaggle was actually made by four different datasets merged vertically, instead of horizontally. Because of that, I had to understand where each dataset begins and ends, to separate them and to merge them horizontally. To create my final dataset, I decided to use only the first three “sub-dataset” since the fourth was ambiguous.")
 
 index_to_keep_0 = np.arange(6468)
 mental_1 = pd.read_csv("Mental_Dataset.csv").loc[index_to_keep_0]
@@ -76,7 +73,7 @@ mental_health_final.to_csv('mental_health_final.csv', index=False)
 
 #PLOTS
 
-st.markdown("At this point of the project I decided to analyze the situation in each European country plotting the trends of the disorders")
+st.markdown("In the following section of my presentation I show for each European country the trends in disorders, the prevalence in gender and the correlation between each disorder inside each country.")
 
 Austria= mental_health_final.loc[mental_health_final["Country"] == "Austria"].set_index("Year")
 Belgium = mental_health_final.loc[mental_health_final["Country"] == "Belgium"].set_index("Year")
@@ -153,7 +150,6 @@ with st.expander("Correlation between disorders"):
     st.write("The heatmap above shows the correlation between each disorders. It is also interesting to check how the gender is correlated to each disorder.")
 
 #BELGIUM
-
 figBE, axsBE = plt.subplots(4, 2, figsize=(8, 15))
 axsBE = axsBE.ravel()
 columns_to_plot = Belgium.loc[:,~Belgium.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
@@ -222,7 +218,6 @@ with st.expander("Correlation between disorders"):
     st.write()
 
 #CYPRUS
-st.subheader("Disorders across Cyprus 1990-2017")
 figCY, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 colors=['blue','red','green','purple','orange','brown','pink','gray']
@@ -257,478 +252,445 @@ with st.expander("Correlation between disorders"):
     st.pyplot(a)
 
 #CROATIA
-st.subheader("Disorders across Croatia 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figCRO, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Croatia.loc[:,~Croatia.columns.isin(['Country', 'Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Croatia.index,Croatia[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figCRO1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Croatia.columns[8:10]):
     axs[i].plot(Croatia.index,Croatia[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-q = plt.figure(figsize=(8,6))
-sb.heatmap(Croatia.corr(), annot=True)
-plt.show()
-st.pyplot(q)
+st.subheader("Disorders across Croatia 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figCRO)
+    st.write("The plots show an uptrend in Schizofrenia, Bipolarism and in Eatind Disorders. On the other hand, the remaining ones are showing a decrese in numbers of cases. The alcohol abuse, after a sharp increase from the 2000, is now gradually declining.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figCRO1)
+    st.write("Both females and males trends show a rapid decrease over the years. Now the percentage of people affected is almost constant.")
+with st.expander("Correlation between disorders"):
+    q = plt.figure(figsize=(8,6))
+    sb.heatmap(Croatia.corr(), annot=True)
+    st.pyplot(q)
 
 # DENMARK
-
-st.subheader("Disorders across Denmark 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figDE, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Denmark.loc[:,~Denmark.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Denmark.index,Denmark[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figDE1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Denmark.columns[8:10]):
     axs[i].plot(Denmark.index,Denmark[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-w =  plt.figure(figsize=(8,6))
-sb.heatmap(Denmark.corr(), annot=True)
-st.pyplot(w)
+st.subheader("Disorders across Denmark 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figDE)
+    st.write("It is striking to see the steady increase in Schizophrenia and in Drug use disorders, respectively from 2005 and 2010. On the other hand, Bipolar Disorder has a marked drop from 2000. Depression and Suicide rates follow a similiar decreasing pattern, like Alcohol and Anxiety Disorders.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figDE1)
+    st.write("Both females and males trends show a rapid decrease over the years. Now the percentage of people affected is almost constant.")
+with st.expander("Correlation between disorders"):
+    w =  plt.figure(figsize=(8,6))
+    sb.heatmap(Denmark.corr(), annot=True)
+    st.pyplot(w)
 
 # ESTONIA
-st.subheader("Disorders across Estonia 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figES, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Estonia.loc[:,~Estonia.columns.isin(['Country', 'Year', 'Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Estonia.index,Estonia[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figES1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Estonia.columns[8:10]):
     axs[i].plot(Estonia.index,Estonia[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-e = plt.figure(figsize=(8,6))
-sb.heatmap(Estonia.corr(), annot=True)
-st.pyplot(e)
+st.subheader("Disorders across Estonia 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figES)
+    st.write("Schizophrenia, Bipolarism, Drug use Disorder and Eating Disorder are following an increasing trend. On the contrary, Suicide Rates and Depression are decreasing. Anxiety disorders and Alcohol abuse have a bumpy trends but now they are bothe slightly decreasing. ")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figES1)
+    st.write("Both females and males trends show a rapid decrease over the years. Now the percentage of people affected is almost constant.")
+with st.expander("Correlation between disorders"):
+    e = plt.figure(figsize=(8,6))
+    sb.heatmap(Estonia.corr(), annot=True)
+    st.pyplot(e)
 
 # FINLAND
-st.subheader("Disorders across Finland 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figFI, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Finland.loc[:,~Finland.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Finland.index,Finland[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figFI1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Finland.columns[8:10]):
     axs[i].plot(Finland.index, Finland[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-R = plt.figure(figsize=(8,6))
-sb.heatmap(Finland.corr(), annot=True)
-st.pyplot(R)
+st.subheader("Disorders across Finland 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figFI)
+    st.write("On the one hand, Depression and Suicide Rates are gradually decreasing over the years. On the other hand, Schizophrenia steeply decreases from 2010. Similarly it happens to Bipolar Disorder and Anxiety disorder, but they now have an increasing trends. Both Eating Disorders and Drug use Disorder have a rise in the number of cases.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figFI1)
+    st.write("Both females and males trends show a slow decrease over the years.")
+with st.expander("Correlation between disorders"):
+    R = plt.figure(figsize=(8,6))
+    sb.heatmap(Finland.corr(), annot=True)
+    st.pyplot(R)
 
-# FRANCE
-st.subheader("Disorders across France 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+#FRANCE
+figFR, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = France.loc[:,~France.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(France.index, France[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figFR1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(France.columns[8:10]):
     axs[i].plot(France.index,France[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-t= plt.figure(figsize=(8,6))
-sb.heatmap(France.corr(), annot=True)
-st.pyplot(t)
+st.subheader("Disorders across France 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figFR)
+    st.write("Schizophrenia, Bipolarism and Anxiety Disorders follow a similar path, they increase from 1990 to 2000-2005 and then they constantly decrease. As we can see from the plots, Eating Disorder is negative correlated to Depression and Suicide Rates since they have opposite trends. Drug and Alcohol use Disorders also have a similar path and they both start falling in numbers around 2010.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figFR1)
+    st.write("Both females and males trends show a decrease over the years, but around 2005 the number of people affected by disorders arises to then decrease again around 2010.")
+with st.expander("Correlation between disorders"):
+    t= plt.figure(figsize=(8,6))
+    sb.heatmap(France.corr(), annot=True)
+    st.pyplot(t)
 
 # GERMANY
-st.subheader("Disorders across Germany 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figGE, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Germany.loc[:,~Germany.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Germany.index,Germany[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figGE1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Germany.columns[8:10]):
     axs[i].plot(Germany.index, Germany[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-u = plt.figure(figsize=(8,6))
-sb.heatmap(Germany.corr(), annot=True)
-st.pyplot(u)
+st.subheader("Disorders across Germany 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figGE)
+    st.write("Over the years, the number of cases afflicted by Alcohol and Anxiety disorders has decreased as well as the Suicide Rates. On the other hand, the percentage of people affected by Depression, Bipolarism and Drug use Disorder has increased.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figGE1)
+    st.write("The trend in prevalence is different for the gender. From 2005, the prevalence in males starts decreasing, whereas the prevalence in females rises even more after a steep increase that began in 2000..")
+with st.expander("Correlation between disorders"):
+    u = plt.figure(figsize=(8,6))
+    sb.heatmap(Germany.corr(), annot=True)
+    st.pyplot(u)
 
 # GREECE
-st.subheader("Disorders across Greece 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figGRE, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Greece.loc[:,~Greece.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Greece.index,Greece[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figGRE1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-for i, col in enumerate(Greece.columns[9:11]):
+for i, col in enumerate(Greece.columns[8:10]):
     axs[i].plot(Greece.index,Greece[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-I=plt.figure(figsize=(8,6))
-sb.heatmap(Greece.corr(), annot=True)
-st.pyplot(I)
+st.subheader("Disorders across Greece 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figGRE)
+    st.write("Schizophrenia and Anxiety disorders follow a similar path by increasing from 2000 and slightly decreasing by 2010. Similar happen to Eating and Alcohol use disorders. As can be seen from the plots, many changes in trends happen around 2000 and 2005. The most visible change is in Suicide rates: after reaching the lowest point in 2002, it can be clearly seen the phenomenal growth until 2015.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figGRE1)
+    st.write("The prevalence in gender follow the same trends: the percentage of people affected by disorders increases until 2005 when the rates start falling.")
+with st.expander("Correlation between disorders"):
+    I=plt.figure(figsize=(8,6))
+    sb.heatmap(Greece.corr(), annot=True)
+    st.pyplot(I)
 
 # SLOVAKIA
-st.subheader("Disorders across Slovakia 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figSLO, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Slovakia.loc[:,~Slovakia.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Slovakia.index,Slovakia[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figSLO1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Slovakia.columns[8:10]):
     axs[i].plot(Slovakia.index,Slovakia[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-o=plt.figure(figsize=(8,6))
-sb.heatmap(Slovakia.corr(), annot=True)
-st.pyplot(o)
+st.subheader("Disorders across Slovakia 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figSLO)
+    st.write("Schizophrenia and Anxiety disorders follow a similar path by increasing from 2000 and slightly decreasing by 2010. Similar happen to Eating and Alcohol use disorders. As can be seen from the plots, many changes in trends happen around 2000 and 2005. The most visible change is in Suicide rates: after reaching the lowest point in 2002, it can be clearly seen the phenomenal growth until 2015.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figSLO1)
+    st.write("The prevalence in gender follow the same trends: the percentage of people affected by disorders increases until 2005 when the rates start falling.")
+with st.expander("Correlation between disorders"):
+    o=plt.figure(figsize=(8,6))
+    sb.heatmap(Slovakia.corr(), annot=True)
+    st.pyplot(o)
 
 # SPAIN
-st.subheader("Disorders across Spain 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figSPA, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Spain.loc[:,~Spain.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Spain.index,Spain[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figSPA1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Spain.columns[8:10]):
     axs[i].plot(Spain.index,Spain[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-P=plt.figure(figsize=(8,6))
-sb.heatmap(Spain.corr(), annot=True)
-st.pyplot(P)
+st.subheader("Disorders across Spain 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figSPA)
+    st.write("Overall, it stands out that most of the charts are showing a general increase in rates. Bipolar Disorder steady rises from 2000, as well as Anxiety Disorder. Depression and Suicide rates have a decreasing path, even though the first changes its trend from 2005.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figSPA1)
+    st.write("Both females and males trends fall over the years but from 2005 the percentage of people affected rises.")
+with st.expander("Correlation between disorders"):
+    P=plt.figure(figsize=(8,6))
+    sb.heatmap(Spain.corr(), annot=True)
+    st.pyplot(P)
 
 # HUNGARY
-st.subheader("Disorders across Hungary 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figHU, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Hungary.loc[:,~Hungary.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Hungary.index,Hungary[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figHU1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Hungary.columns[8:10]):
     axs[i].plot(Hungary.index,Hungary[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-A= plt.figure(figsize=(8,6))
-sb.heatmap(Hungary.corr(), annot=True)
-st.pyplot(A)
+st.subheader("Disorders across Hungary 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figHU)
+    st.write("Similar to the previous Country, most of the charts are showing a general increase in rates. Only two charts are depicting a decreasing path: Suicide Rates and Depression")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figHU1)
+    st.write("Both females and males have a decreasing trends.")
+with st.expander("Correlation between disorders"):
+    A= plt.figure(figsize=(8,6))
+    sb.heatmap(Hungary.corr(), annot=True)
+    st.pyplot(A)
 
-# IRELAND
-st.subheader("Disorders across Ireland 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+#IRELAND
+figIR, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Ireland.loc[:,~Ireland.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Ireland.index,Ireland[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figIR1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Ireland.columns[8:10]):
     axs[i].plot(Ireland.index,Ireland[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-F= plt.figure(figsize=(8,6))
-sb.heatmap(Ireland.corr(), annot=True)
-st.pyplot(F)
+st.subheader("Disorders across Ireland 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figIR)
+    st.write("It is striking that, overall, the plots follow an identical continual growth over the years. Depression and Drug use Disorder also follow this trend but from 2005 the percentage start falling. In parallel, Suicide Rates has dropped since 2000.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figIR1)
+    st.write("Both females and males have an increasing trends until 2005 when they both start droppong.")
+    F= plt.figure(figsize=(8,6))
+    sb.heatmap(Ireland.corr(), annot=True)
+    st.pyplot(F)
 
 #ITALY
-st.subheader("Disorders across Italy 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figIT, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Italy.loc[:,~Italy.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Italy.index,Italy[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
-
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figIT1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Italy.columns[8:10]):
     axs[i].plot(Italy.index,Italy[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-S= plt.figure(figsize=(8,6))
-sb.heatmap(Italy.corr(), annot=True)
-st.pyplot(S)
+st.subheader("Disorders across Italy 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figIT)
+    st.write("It can clearly be seen that there is a slight rise in Eating Disorder, Depression and Bipolarism in the last 10 years. Depression and Suicide Rates follow a similar decreasing trend. Both Anxiety and Alcohol Abuse rise from 2000, reaching the maximum level around 2010.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figIT1)
+    st.write("Both females and males have a decreasing trends until 2005 when it start slightly increasing.")
+with st.expander("Correlation between disorders"):
+    S= plt.figure(figsize=(8,6))
+    sb.heatmap(Italy.corr(), annot=True)
+    st.pyplot(S)
 
 # LATVIA
-st.subheader("Disorders across Latvia 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figLAT, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Latvia.loc[:,~Latvia.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Latvia.index,Latvia[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figLAT1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Latvia.columns[8:10]):
     axs[i].plot(Latvia.index,Latvia[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-F= plt.figure(figsize=(8,6))
-sb.heatmap(Latvia.corr(), annot=True)
-st.pyplot(F)
+st.subheader("Disorders across Latvia 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figLAT)
+    st.write("Many of the disorders have a decreasing trend until 2000 when it starts an opposite increasing path. Alcohol Abuse, Suicide Rates and Depression follow a falling path.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figLAT1)
+    st.write("Both females and males have a decreasing trend that is constant from 2010.")
+with st.expander("Correlation between disorders"):
+    F= plt.figure(figsize=(8,6))
+    sb.heatmap(Latvia.corr(), annot=True)
+    st.pyplot(F)
 
 # LITHUANIA
-st.subheader("Disorders across Lithuania 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figLIT, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Lithuania.loc[:,~Lithuania.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Lithuania.index,Lithuania[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figLIT1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 for i, col in enumerate(Lithuania.columns[8:10]):
     axs[i].plot(Lithuania.index,Lithuania[col],'o-',color="red")
@@ -736,245 +698,227 @@ for i, col in enumerate(Lithuania.columns[8:10]):
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-h=plt.figure(figsize=(8,6))
-sb.heatmap(Lithuania.corr(), annot=True)
-st.pyplot(h)
+st.subheader("Disorders across Lithuania 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figLIT)
+    st.write("Many of the disorders start to have an increasing trend from 2000-2005. On the other hand, Alcohol Abuse, Suicide Rates and Depression have an opposite behaviour.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figLIT1)
+    st.write("Both females and males have an increasing trend until 2000 when it starts falling.")
+with st.expander("Correlation between disorders"):
+    h=plt.figure(figsize=(8,6))
+    sb.heatmap(Lithuania.corr(), annot=True)
+    st.pyplot(h)
 
 # LUXEMBOURG
-st.subheader("Disorders across Luxembourg 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figLUX, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Luxembourg.loc[:,~Luxembourg.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Luxembourg.index,Luxembourg[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
-
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figLUX1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
-for i, col in enumerate(Luxembourg.columns[9:11]):
+for i, col in enumerate(Luxembourg.columns[8:10]):
     axs[i].plot(Luxembourg.index,Luxembourg[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-J=plt.figure(figsize=(8,6))
-sb.heatmap(Malta.corr(), annot=True)
-st.pyplot(J)
+st.subheader("Disorders across Luxembourg 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figLIT)
+    st.write("The majority of the plots show a decreasing trend that starts between the last year of the nineties and the beginning of the XXI century. On the other hand, Schizophrenia and Eating Disorder have an opposite behaviour being positively correlated to each other.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figLIT1)
+    st.write("Both females and males have a decreasing trend which is now constant.")
+with st.expander("Correlation between disorders"):
+    J=plt.figure(figsize=(8,6))
+    sb.heatmap(Malta.corr(), annot=True)
+    st.pyplot(J)
 
 # HOLLAND
-st.subheader("Disorders across Netherlands 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figHO, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Netherlands.loc[:,~Netherlands.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Netherlands.index,Netherlands[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figHO1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Netherlands.columns[8:10]):
     axs[i].plot(Netherlands.index,Netherlands[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-L= plt.figure(figsize=(8,6))
-sb.heatmap(Netherlands.corr(), annot=True)
-st.pyplot(L)
+st.subheader("Disorders across Netherlands 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figLIT)
+    st.write("Anxienty Disorder, Alcohol Abuse and Depression follow a similar trend. Overall, the percentage of people affected by mental disorders is decreased over time, a part for Alcholism, Bipolarism and Eating Disorders.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figLIT1)
+    st.write("The trends are similar, however, the percentage of males affected is higher than the females.")
+with st.expander("Correlation between disorders"):
+    L= plt.figure(figsize=(8,6))
+    sb.heatmap(Netherlands.corr(), annot=True)
+    st.pyplot(L)
 
 # POLAND
-
-st.subheader("Disorders across Poland 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figPO, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Poland.loc[:,~Poland.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Poland.index,Poland[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
-
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figPO1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Poland.columns[8:10]):
     axs[i].plot(Poland.index,Poland[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-Z=plt.figure(figsize=(8,6))
-sb.heatmap(Poland.corr(), annot=True)
-st.pyplot(Z)
+st.subheader("Disorders across Poland 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figPO)
+    st.write("The majority of the plots show an increase in percentage of people suffering of mental health disorder. Howeevr, the number of people affected by Depression, Drug addiction is falling, as well as Suicide Rates.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figPO1)
+    st.write("The plots show that the number of males affected by mental disorders is close to the females, even if the latter has decreased from 2000.")
+with st.expander("Correlation between disorders"):
+    Z=plt.figure(figsize=(8,6))
+    sb.heatmap(Poland.corr(), annot=True)
+    st.pyplot(Z)
 
 # PORTUGAL
-st.subheader("Disorders across Portugal 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figPOR, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Portugal.loc[:,~Portugal.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Portugal.index,Portugal[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figPOR1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Portugal.columns[8:10]):
     axs[i].plot(Portugal.index,Portugal[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-v=plt.figure(figsize=(8,6))
-sb.heatmap(Portugal.corr(), annot=True)
-st.pyplot(v)
+st.subheader("Disorders across Portugal 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figPOR)
+    st.write("Schizophrenia, Anxiety and Eating Disorders have a similar costant increasing trend. Drug use disorder and Bipolarism also have a similar bumpy path, reaching the lowest level in 2010 and 2005 respectively.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figPOR1)
+    st.write("Prevalence in females and males have a common path where they reach the highest level in 2005 which is followed by a steady decrease.")
+with st.expander("Correlation between disorders"):
+    v=plt.figure(figsize=(8,6))
+    sb.heatmap(Portugal.corr(), annot=True)
+    st.pyplot(v)
 
 # CZECH REPUBLIC
-
-st.subheader("Disorders across Czech Republic 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figCZ, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Czech_Republic.loc[:,~Czech_Republic.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Czech_Republic.index,Czech_Republic[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figCZ1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Czech_Republic.columns[8:10]):
     axs[i].plot(Czech_Republic.index,Czech_Republic[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-m=plt.figure(figsize=(8,6))
-sb.heatmap(Czech_Republic.corr(), annot=True)
-st.pyplot(m)
+st.subheader("Disorders across Czech Republic 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figCZ)
+    st.write("Overall, the percentage of people affected by mental health disorders increases over time. However, Depression, Suicide Rates and Anxiety Disorder decreases over the years. The latter, in particular, reach the highest level around 2005 when it starts a decreasing trend.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figCZ1)
+    st.write("The trends are similar, however, the percentage of females affected is higher than the males.")
+with st.expander("Correlation between disorders"):
+    m=plt.figure(figsize=(8,6))
+    sb.heatmap(Czech_Republic.corr(), annot=True)
+    st.pyplot(m)
 
 # ROMANIA
-
-st.subheader("Disorders across Romania 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figRO, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Romania.loc[:,~Romania.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Romania.index,Romania[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figRO1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Romania.columns[8:10]):
     axs[i].plot(Romania.index,Romania[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-N=plt.figure(figsize=(8,6))
-sb.heatmap(Romania.corr(), annot=True)
-st.pyplot(N)
+st.subheader("Disorders across Romania 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figRO)
+    st.write("Schizophrenia, Eating Disorder and Bipolarism have a similar increasing path, which is the opposite of Alcoholism. After having reached the minimum respectively in 2001 and 2010, Drug Addiction and Depression have a steady increase.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figRO1)
+    st.write("The trends in gender prevalence are exactly the opposite: on th one hand, the males affected by disorders increases over time, on the other hand, the percentage of females decreases.")
+with st.expander("Correlation between disorders"):
+    N=plt.figure(figsize=(8,6))
+    sb.heatmap(Romania.corr(), annot=True)
+    st.pyplot(N)
 
 # SLOVENIA
-
-st.subheader("Disorders across Slovenia 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figSLOV, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Slovenia.loc[:,~Slovenia.columns.isin(['Country', 'Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Slovenia.index,Slovenia[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
-
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figSLOV1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
 for i, col in enumerate(Slovenia.columns[8:10]):
     axs[i].plot(Slovenia.index,Slovenia[col],'o-',color="red")
@@ -982,48 +926,52 @@ for i, col in enumerate(Slovenia.columns[8:10]):
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-f=plt.figure(figsize=(8,6))
-sb.heatmap(Slovenia.corr(), annot=True)
-st.pyplot(f)
+st.subheader("Disorders across Slovenia 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figSLOV)
+    st.write("Schizophrenia, Bipolarism, Eating, Drug and Alcohol use disorders increases over time, whereas the other disorders decreases.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figSLOV1)
+    st.write("The trends are similar, however, the percentage of females affected is higher than the males.")
+with st.expander("Correlation between disorders"):
+    f=plt.figure(figsize=(8,6))
+    sb.heatmap(Slovenia.corr(), annot=True)
+    st.pyplot(f)
+
 
 # SWEDEN
-st.subheader("Disorders across Sweden 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(8, 15))
+figSWE, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Sweden.loc[:,~Sweden.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
-
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Sweden.index,Sweden[col],'o-',color=colors[i])
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
 # PREVALENCE DISTRIBUTION
-st.markdown(":red[PREVALENCE IN GENDER]")
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
+figSWE1, axs = plt.subplots(1, 2, figsize=(10,5))
 axs = axs.ravel()
-
 for i, col in enumerate(Sweden.columns[8:10]):
     axs[i].plot(Sweden.index,Sweden[col],'o-',color="red")
     axs[i].set_title(col)
     axs[i].set_xlabel('years')
     axs[i].set_ylabel('percentage')
 plt.tight_layout()
-st.pyplot(fig)
 
-# correlation
-st.markdown(":red[CORRELATION BETWEEN DISORDERS]")
-z=plt.figure(figsize=(8,6))
-sb.heatmap(Sweden.corr(), annot=True)
-st.pyplot(z)
+st.subheader("Disorders across Sweden 1990-2017")
+with st.expander("Plots of the disorders"):
+    st.pyplot(figSWE)
+    st.write("Bipolarism and Anxiety disorder follow almost the same trend, where the number of cases decreases from 2005. Also Schizophrenia, Depressin and Suicide rates decreases over time. However, the number of people suffering by Eating and Drug use disorder increases.")
+with st.expander("Prevalence in distribution"):
+    st.pyplot(figSWE1)
+    st.write("The prevalence in gender follow in both cases a decreasing path with a slight increase between 2000 and 2005 for the males and between 2005 and 2010 for the females.")
+with st.expander("Correlation between disorders"):
+    z=plt.figure(figsize=(8,6))
+    sb.heatmap(Sweden.corr(), annot=True)
+    st.pyplot(z)
 
 #EUROPE
 
@@ -1036,12 +984,9 @@ Europe_df.head()
 Europe_df.info()
 
 #PLOTS
-
 st.subheader("Disorders across Europe 1990-2017")
 fig, axs = plt.subplots(4, 2, figsize=(20, 20))
 axs = axs.ravel()
-
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Europe_df.loc[:,~Europe_df.columns.isin(['Country', 'Prevalence in males', 'Prevalence in females'])]
 
 for i, col in enumerate(columns_to_plot):

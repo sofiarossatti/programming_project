@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import streamlit as st
 import seaborn as sb
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans as km
 #import tapby
 mental_health = pd.read_csv("Mental_Dataset.csv") 
 
@@ -18,31 +20,24 @@ index_to_keep = np.arange(6469, 54276)
 mental_2 = pd.read_csv("Mental_Dataset.csv").loc[index_to_keep]
 
 # MENTAL_1
-mental_1.info()
 mental_1 = mental_1.drop(["Code", "index"], axis = 1)
 mental_1["Bipolar disorder (%)"] = mental_1["Bipolar disorder (%)"].astype(float) 
 mental_1["Schizophrenia (%)"] = mental_1["Schizophrenia (%)"].astype(float)
 mental_1["Eating disorders (%)"] = mental_1["Eating disorders (%)"].astype(float)  
 mental_1["Year"] = mental_1["Year"].astype(float)
-
 mental_1.info() # my data are clean now!
 
 #MENTAL_2
-mental_2.info() # Firstly, I drop the empty columns
-mental_2.head()
 mental_2 = mental_2.drop(["Alcohol use disorders (%)","Depression (%)", "Drug use disorders (%)", "Anxiety disorders (%)", "Code", "index"], axis = 1)
 mental_2.rename(columns={"Schizophrenia (%)": "Prevalence in males", "Bipolar disorder (%)": "Prevalence in females", "Eating disorders (%)": "Population"}, inplace = True)
-
 mental_2 = mental_2.dropna()
 mental_2["Year"] = mental_2["Year"].astype(int)
 mental_2["Prevalence in males"] = mental_2["Prevalence in males"].astype(float)
 mental_2["Prevalence in females"] = mental_2["Prevalence in females"].astype(float)
 mental_2["Population"] = mental_2["Population"].astype(float)
-
 mental_2.info() #my data are clean now!
 
 #MENTAL_3
-
 true_index = np.arange(54277,102084)
 mental_3 = pd.read_csv("Mental_Dataset.csv").loc[true_index]
 mental_3 = mental_3.drop(["Alcohol use disorders (%)","Depression (%)", "Drug use disorders (%)", "Anxiety disorders (%)", "Entity", "Year"], axis = 1)
@@ -55,11 +50,8 @@ mental_3["Population"] = mental_3["Population"].astype(float)
 mental_3.info() #my data are clean now!
 
 #FINAL DATASET
-
 mental_health_ = pd.merge(mental_1,mental_2)
-mental_health_.head().T
 mental_health_['Year'] = mental_health_['Year'].astype(int)
-mental_health_.info()
 
 mental_health_.index = mental_3.index
 mental_health_final = pd.concat([mental_health_, mental_3], axis=1)
@@ -107,7 +99,6 @@ Sweden = mental_health_final.loc[mental_health_final["Country"] == "Sweden"].set
 # sidebar
 countries_dict = {"Austria":Austria, "Belgium":Belgium, "Bulgaria":Bulgaria, "Cyprus": Cyprus, "Croatia":Croatia, "Denmark":Denmark, "Estonia":Estonia, "Finland":Finland, "France":France, "Germany":Germany, "Greece":Greece, "Slovakia":Slovakia, "Spain":Spain, "Hungary":Hungary, "Ireland":Ireland, "Italy":Italy, "Latvia":Latvia, "Lithuania":Lithuania, "Luxembourg":Luxembourg, "Malta":Malta, "Netherlands":Netherlands, "Poland":Poland, "Portugal":Portugal, "Czech Republic":Czech_Republic, "Romania":Romania, "Slovenia":Slovenia,"Sweden": Sweden}
 st.sidebar.title("Plots")
-
 for country in countries_dict.keys():
     if st.sidebar.button(country):
         st.subheader(f"Disorders across {country} 1990-2017")
@@ -939,7 +930,6 @@ with st.expander("Correlation between disorders"):
     sb.heatmap(Slovenia.corr(), annot=True)
     st.pyplot(f)
 
-
 # SWEDEN
 figSWE, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
@@ -973,83 +963,38 @@ with st.expander("Correlation between disorders"):
     sb.heatmap(Sweden.corr(), annot=True)
     st.pyplot(z)
 
-#EUROPE
-
+#EUROPE and WORLD
 Europe = pd.concat([Austria, Belgium, Bulgaria, Cyprus, Croatia, Denmark, Estonia, Finland, France, Germany, Greece, Slovakia, Spain, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Czech_Republic, Romania, Slovenia, Sweden], axis = 0)
-Europe.info()
-# groupby year: I want to create a dataset with the mean values of all the countries
 Europe_df_ = Europe.groupby("Year")
 Europe_df = Europe_df_.mean()
-Europe_df.head()
-Europe_df.info()
 
-#PLOTS
-st.subheader("Disorders across Europe 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
-axs = axs.ravel()
-columns_to_plot = Europe_df.loc[:,~Europe_df.columns.isin(['Country', 'Prevalence in males', 'Prevalence in females'])]
-
-for i, col in enumerate(columns_to_plot):
-    axs[i].plot(Europe_df.index,Europe_df[col],'o-',color=colors[i])
-    axs[i].set_title(col)
-    axs[i].set_xlabel('years')
-    axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
-
-# PREVALENCE DISTRIBUTION
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
-axs = axs.ravel()
-
-for i, col in enumerate(Europe_df.columns[7:9]):
-    axs[i].plot(Europe_df.index,Europe_df[col],'o-',color="red")
-    axs[i].set_title(col)
-    axs[i].set_xlabel('years')
-    axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
-
-# correlation
-plt.figure(figsize=(8,6))
-sb.heatmap(Europe_df.corr(), annot=True)
-plt.show()
-
-#WORLD
 World_df_ = mental_health_final.groupby("Year")
 World_df = World_df_.mean()
-World_df.info()
 
-#PLOTS
+# CLUSTERING EU
+x = [Europe_df["Schizophrenia (%)"], Europe_df["Bipolar disorder (%)"], Europe_df["Eating disorders (%)"], Europe_df["Anxiety disorders (%)"], Europe_df["Drug use disorders (%)"], Europe_df["Depression (%)"], Europe_df["Alcohol use disorders (%)"], Europe_df["Prevalence in males"], Europe_df["Prevalence in females"], Europe_df["Suicide Rates"]]
+y = Europe_df.index
 
-st.subheader("Disorders across the World 1990-2017")
-fig, axs = plt.subplots(4, 2, figsize=(20, 20))
-axs = axs.ravel()
+st.title("Cluster analysis: KMeans Algorithm on the European situation")
+st.write("After having created a dataset with all the 27 European Countries, I decided to conduct a clustering analysis to find patterns in the data by grouping similar data points together. On the x-axis there are the mental disorders, while on the y-axis the European countries. Thanks to the KMeans method I was able to check the similarities in disorders across countries.")
 
-colors=['blue','red','green','purple','orange','brown','pink','gray']
-columns_to_plot = World_df.loc[:,~World_df.columns.isin(['Country', 'Prevalence in males', 'Prevalence in females'])]
+x, y = make_blobs(n_samples=200, n_features=2, centers= 5, cluster_std=0.8, random_state=42)
+km_eu = km(n_clusters=5, init="random", n_init=10, max_iter=100, tol = 1e-04, random_state=0)
+y_km= km_eu.fit_predict(x)
+EU_scatter= plt.figure(figsize=(10, 8))
+for i in range(5):
+  plt.scatter(x[y_km == i, 0], x[y_km ==i, 1])
+plt.legend(["cluster 1", "cluster 2", "cluster 3", "cluster 4", "cluster 5"])
+st.pyplot(EU_scatter)
 
-for i, col in enumerate(columns_to_plot):
-    axs[i].plot(World_df.index,World_df[col],'o-',color=colors[i])
-    axs[i].set_title(col)
-    axs[i].set_xlabel('years')
-    axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
+# CLUSTERS COUNTRIES EU
+clusters = km_eu.fit_predict(Europe_df)
+Europe_df["cluster"] = clusters
 
-# PREVALENCE DISTRIBUTION
-fig, axs = plt.subplots(1, 2, figsize=(10,5))
-axs = axs.ravel()
+one_df = Europe_df.loc[Europe_df["cluster"]==0]
+two_df = Europe_df.loc[Europe_df["cluster"]==1]
+three_df = Europe_df.loc[Europe_df["cluster"]==2]
+four_df = Europe_df.loc[Europe_df["cluster"]==3]
+five_df = Europe_df.loc[Europe_df["cluster"]==4]
 
-for i, col in enumerate(World_df.columns[7:9]):
-    axs[i].plot(World_df.index,World_df[col],'o-',color="red")
-    axs[i].set_title(col)
-    axs[i].set_xlabel('years')
-    axs[i].set_ylabel('percentage')
-plt.tight_layout()
-plt.show()
-
-# correlation
-plt.figure(figsize=(8,6))
-sb.heatmap(World_df.corr(), annot=True)
-plt.show()
-
+st.write("From the scatter plot above it can be seen that I clustered the Countries into 5 groups. In  the first cluster there are Portugal, Sweden and Finland; in the second one, Austria, Belgium, Cyprus, Denmark, Italy, Luxembourg, Malta and Spain. The third cluster is made by France, Germany, Greece, Ireland and Netherlands, while the fourth cluster by Bulgaria, Croatia, Czech Republic, Hungary, Poland, Romania, Slovakia and Slovenia. In the last cluster there are Estonia, Latvia and Lithuania.")

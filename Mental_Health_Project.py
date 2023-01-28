@@ -1,19 +1,22 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt 
-import streamlit as st
+import matplotlib.pyplot as plt
 import seaborn as sb
+from scipy.cluster.hierarchy import linkage, dendrogram
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans as km
-#import tapby
+import plotly.express as px
+import plotly as py
+import plotly.graph_objs as go
+import streamlit as st
+
 mental_health = pd.read_csv("Mental_Dataset.csv") 
 
 st.title("European Trends in Mental Health Project")
 st.header("Aim of the project")
-st.markdown("I worked on a dataset which offers a global vision of mental health disorders between 1990 and 2017 and I decided to focus my attention on the European situation. This project recurs to understand correlation between mental diseases inside each European Country. At the end of the presentation I would like to present, thanks to a cluster modelling, the similarities between the States mapping them geographically.")
+st.markdown("This project aims to analyze the spread of mental disorders across Europe from 1990 to 2017. The presentation is divided in two parts: in the first part I plotted (for all the 27 current European Countries) the trends in mental diseases, the prevalence in gender and heatmaps which show the correlation between each disorders. While, in the second part, I focused my attention on finding a proper model for this dataset looking at Europe as a whole and I decided to conduct a Cluster Analysis. In addition, I have plotted a European map where it can be visually seen which country belongs to each cluster.")
 st.header("Exploring and cleaning the dataset")
-st.markdown("Firstly, I began by looking at the dataset information and I saw that there was many null values and many different type, mainly regarded as object. I started by changing  theses values into floats. Soon I realized that there is a problem in the Schizophrenia (%) column: apparently there was a string in the column at row 6468.  Working on data, I  discovered that the dataset offered by Kaggle was actually made by four different datasets merged vertically, instead of horizontally. Because of that, I had to understand where each dataset begins and ends, to separate them and to merge them horizontally. To create my final dataset, I decided to use only the first three “sub-dataset” since the fourth was ambiguous.")
-
+st.markdown("In order to have a clean dataset to work with, I started by looking at the information and I saw that there was many null values and many different types, mainly regarded as object. The first step, then, has been changing these values into floats (since they were all percentage) but, by doing that, I encountered a problem. In Schizophrenia (%) column, at row 6468, there was a string. Working on data, I discovered that my dataset was made by four smaller and different datasets. Because of that, I had to understand where each dataset begins and ends, to separate them and to merge them horizontally. To create my final dataset, I decided to use only the first three “sub-datasets” since the fourth was ambiguous.")
 index_to_keep_0 = np.arange(6468)
 mental_1 = pd.read_csv("Mental_Dataset.csv").loc[index_to_keep_0]
 index_to_keep = np.arange(6469, 54276)
@@ -64,48 +67,14 @@ mental_health_final.info() # My final dataset is clean!
 mental_health_final.to_csv('mental_health_final.csv', index=False)
 
 #PLOTS
-
 st.markdown("In the following section of my presentation I show for each European country the trends in disorders, the prevalence in gender and the correlation between each disorder inside each country.")
+countries = ["Austria", "Belgium", "Bulgaria", "Cyprus", "Croatia", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Slovakia", "Spain", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovenia", "Sweden"]
+for country in countries:
+    locals()[country] = mental_health_final.loc[mental_health_final["Country"] == country].set_index("Year")
 
-Austria= mental_health_final.loc[mental_health_final["Country"] == "Austria"].set_index("Year")
-Belgium = mental_health_final.loc[mental_health_final["Country"] == "Belgium"].set_index("Year")
-Bulgaria= mental_health_final.loc[mental_health_final["Country"] == "Bulgaria"].set_index("Year")
-Cyprus = mental_health_final.loc[mental_health_final["Country"] == "Cyprus"].set_index("Year")
-Croatia = mental_health_final.loc[mental_health_final["Country"] == "Croatia"].set_index("Year")
-Denmark = mental_health_final.loc[mental_health_final["Country"] == "Denmark"].set_index("Year")
-Estonia = mental_health_final.loc[mental_health_final["Country"] == "Estonia"].set_index("Year")
-Finland = mental_health_final.loc[mental_health_final["Country"] == "Finland"].set_index("Year")
-France = mental_health_final.loc[mental_health_final["Country"] == "France"].set_index("Year")
-Germany = mental_health_final.loc[mental_health_final["Country"] == "Germany"].set_index("Year")
-Greece = mental_health_final.loc[mental_health_final["Country"] == "Greece"].set_index("Year")
-Slovakia = mental_health_final.loc[mental_health_final["Country"] == "Slovakia"].set_index("Year")
-Spain = mental_health_final.loc[mental_health_final["Country"] == "Spain"].set_index("Year")
-Hungary = mental_health_final.loc[mental_health_final["Country"] == "Hungary"].set_index("Year")
-Ireland = mental_health_final.loc[mental_health_final["Country"] == "Ireland"].set_index("Year")
-Italy = mental_health_final.loc[mental_health_final["Country"] == "Italy"].set_index("Year")
-Latvia = mental_health_final.loc[mental_health_final["Country"] == "Latvia"].set_index("Year")
-Lithuania = mental_health_final.loc[mental_health_final["Country"] == "Lithuania"].set_index("Year")
-Luxembourg = mental_health_final.loc[mental_health_final["Country"] == "Luxembourg"].set_index("Year")
-Malta = mental_health_final.loc[mental_health_final["Country"] == "Malta"].set_index("Year")
-Netherlands = mental_health_final.loc[mental_health_final["Country"] == "Netherlands"].set_index("Year")
-Poland = mental_health_final.loc[mental_health_final["Country"] == "Poland"].set_index("Year")
-Portugal = mental_health_final.loc[mental_health_final["Country"] == "Portugal"].set_index("Year")
-Czech_Republic= mental_health_final.loc[mental_health_final["Country"] == "Czech Republic"].set_index("Year")
-Romania = mental_health_final.loc[mental_health_final["Country"] == "Romania"].set_index("Year")
-Slovenia = mental_health_final.loc[mental_health_final["Country"] == "Slovenia"].set_index("Year")
-Sweden = mental_health_final.loc[mental_health_final["Country"] == "Sweden"].set_index("Year")
-
-# STREAMLIT SETTINGS
-# sidebar
-countries_dict = {"Austria":Austria, "Belgium":Belgium, "Bulgaria":Bulgaria, "Cyprus": Cyprus, "Croatia":Croatia, "Denmark":Denmark, "Estonia":Estonia, "Finland":Finland, "France":France, "Germany":Germany, "Greece":Greece, "Slovakia":Slovakia, "Spain":Spain, "Hungary":Hungary, "Ireland":Ireland, "Italy":Italy, "Latvia":Latvia, "Lithuania":Lithuania, "Luxembourg":Luxembourg, "Malta":Malta, "Netherlands":Netherlands, "Poland":Poland, "Portugal":Portugal, "Czech Republic":Czech_Republic, "Romania":Romania, "Slovenia":Slovenia,"Sweden": Sweden}
-st.sidebar.title("Plots")
-for country in countries_dict.keys():
-    if st.sidebar.button(country):
-        st.subheader(f"Disorders across {country} 1990-2017")
-
-#PLOTS, SUBHEADERS, TABS AND EXAPNDERS
+# STREAMLIT SETTINGS: PLOTS, SUBHEADERS, TABS AND EXAPANDERS
 colors=['blue','red','green','purple','orange','brown','pink','gray']
-
+st.title("European Countries plots: an insight of Mental Health Disorders across Europe")
 # AUSTRIA
 figAU, axsAU = plt.subplots(4, 2, figsize=(8,15))
 axs = axsAU.ravel()
@@ -211,7 +180,6 @@ with st.expander("Correlation between disorders"):
 #CYPRUS
 figCY, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
-colors=['blue','red','green','purple','orange','brown','pink','gray']
 columns_to_plot = Cyprus.loc[:,~Cyprus.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
 for i, col in enumerate(columns_to_plot):
     axs[i].plot(Cyprus.index,Cyprus[col],'o-',color=colors[i])
@@ -734,7 +702,7 @@ with st.expander("Correlation between disorders"):
     sb.heatmap(Malta.corr(), annot=True)
     st.pyplot(J)
 
-# HOLLAND
+# HOLAND
 figHO, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 columns_to_plot = Netherlands.loc[:,~Netherlands.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
@@ -833,6 +801,7 @@ with st.expander("Correlation between disorders"):
     st.pyplot(v)
 
 # CZECH REPUBLIC
+Czech_Republic= mental_health_final.loc[mental_health_final["Country"] == "Czech Republic"].set_index("Year") 
 figCZ, axs = plt.subplots(4, 2, figsize=(8, 15))
 axs = axs.ravel()
 columns_to_plot = Czech_Republic.loc[:,~Czech_Republic.columns.isin(['Country','Prevalence in males', 'Prevalence in females'])]
@@ -963,38 +932,77 @@ with st.expander("Correlation between disorders"):
     sb.heatmap(Sweden.corr(), annot=True)
     st.pyplot(z)
 
-#EUROPE and WORLD
+#EUROPE
 Europe = pd.concat([Austria, Belgium, Bulgaria, Cyprus, Croatia, Denmark, Estonia, Finland, France, Germany, Greece, Slovakia, Spain, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Czech_Republic, Romania, Slovenia, Sweden], axis = 0)
-Europe_df_ = Europe.groupby("Year")
-Europe_df = Europe_df_.mean()
-
-World_df_ = mental_health_final.groupby("Year")
-World_df = World_df_.mean()
+Europe_df = Europe.groupby("Country").mean()
+disorders = Europe_df[['Schizophrenia (%)', 'Bipolar disorder (%)', 'Eating disorders (%)','Anxiety disorders (%)', 'Drug use disorders (%)', 'Depression (%)','Alcohol use disorders (%)', 'Suicide Rates']]
 
 # CLUSTERING EU
-x = [Europe_df["Schizophrenia (%)"], Europe_df["Bipolar disorder (%)"], Europe_df["Eating disorders (%)"], Europe_df["Anxiety disorders (%)"], Europe_df["Drug use disorders (%)"], Europe_df["Depression (%)"], Europe_df["Alcohol use disorders (%)"], Europe_df["Prevalence in males"], Europe_df["Prevalence in females"], Europe_df["Suicide Rates"]]
 y = Europe_df.index
-
+x= disorders
 st.title("Cluster analysis: KMeans Algorithm on the European situation")
-st.write("After having created a dataset with all the 27 European Countries, I decided to conduct a clustering analysis to find patterns in the data by grouping similar data points together. On the x-axis there are the mental disorders, while on the y-axis the European countries. Thanks to the KMeans method I was able to check the similarities in disorders across countries.")
+st.write("After having created a dataset with all the 27 European Countries, I decided to conduct a clustering analysis to find patterns in the data by grouping together similar data points.Thanks to the KMeans method I was able to check the similarities in disorders across countries.")
 
-x, y = make_blobs(n_samples=200, n_features=2, centers= 5, cluster_std=0.8, random_state=42)
-km_eu = km(n_clusters=5, init="random", n_init=10, max_iter=100, tol = 1e-04, random_state=0)
-y_km= km_eu.fit_predict(x)
-EU_scatter= plt.figure(figsize=(10, 8))
-for i in range(5):
-  plt.scatter(x[y_km == i, 0], x[y_km ==i, 1])
-plt.legend(["cluster 1", "cluster 2", "cluster 3", "cluster 4", "cluster 5"])
-st.pyplot(EU_scatter)
+#FINDING THE NUMBER OF CLUSTERS: HIERARCHY AND ELBOW METHOD
+st.subheader("Hierarchical clustering")
+linkage_matrix_eu = linkage(x, method='ward')
+dendo= plt.figure(figsize=(9, 8))
+dendrogram(linkage_matrix_eu, labels= Europe_df.index)
+plt.xlabel('Countries') # on the x label I decided to plot the countries in EU
+plt.ylabel('Distance among clusters') # on the y label there is the distance between each cluster
+plt.xticks(rotation='vertical') 
+st.pyplot(dendo)
+st.write("As can be seen from the dendogram, the graph suggests to group the countries into 2 clusters. To be sure of the number of clusters, I also want to use the Elbow Method.")
+
+st.subheader("The Elbow Method")
+square_distance = []
+for k in range(1, 11):
+  kmeans_eu = km(n_clusters=k, n_init=10)
+  kmeans_eu.fit(x)
+  square_distance.append(kmeans_eu.inertia_)
+Elbow= plt.figure(figsize=(7,5))
+plt.plot(range(1, 11), square_distance, "bx-")
+plt.xlabel('Number of clusters')
+plt.ylabel('Inertia')
+plt.xticks(range(10))
+st.pyplot(Elbow)
+st.write("The Elbow Method clearly shows that the number of clusters is three.")
+
+#KMEANS
+st.subheader("The KMeans method")
+x, y = make_blobs(n_samples=200, n_features=2, centers= 3, cluster_std=0.8, random_state=42)
+mblobs= plt.figure(figsize=(10,6))
+plt.scatter(x[:, 0], x[:,1])
+with st.expander("Blobs Scatter Plot"):
+    st.pyplot(mblobs)
+
+EU_km = km(n_clusters=3, init="random", n_init=100, max_iter=100, tol = 1e-04, random_state=0)
+eu_y_km = EU_km.fit_predict(x)
+
+KM= plt.figure(figsize=(10, 6))
+for i in range(4):
+  plt.scatter(x[eu_y_km == i, 0], x[eu_y_km ==i, 1])
+plt.legend(["cluster 0", "cluster 1", "cluster 2"])
+with st.expander("KMeans Scatter Plot"):
+    st.pyplot(KM)
+    st.write("CLUSTER CENTERS")
+    EU_km.cluster_centers_
 
 # CLUSTERS COUNTRIES EU
-clusters = km_eu.fit_predict(Europe_df)
-Europe_df["cluster"] = clusters
+st.subheader("Countries' clusters")
+Europe_df["Cluster"] = EU_km.fit_predict(disorders)
+one_df = Europe_df.loc[Europe_df["Cluster"]==0]
+two_df = Europe_df.loc[Europe_df["Cluster"]==1]
+three_df = Europe_df.loc[Europe_df["Cluster"]==2]
+with st.expander("Cluster zero"):
+    st.write(one_df)
+with st.expander("Cluster one"):
+    st.write(two_df)
+with st.expander("Cluster two"):
+    st.write(three_df)
 
-one_df = Europe_df.loc[Europe_df["cluster"]==0]
-two_df = Europe_df.loc[Europe_df["cluster"]==1]
-three_df = Europe_df.loc[Europe_df["cluster"]==2]
-four_df = Europe_df.loc[Europe_df["cluster"]==3]
-five_df = Europe_df.loc[Europe_df["cluster"]==4]
-
-st.write("From the scatter plot above it can be seen that I clustered the Countries into 5 groups. In  the first cluster there are Portugal, Sweden and Finland; in the second one, Austria, Belgium, Cyprus, Denmark, Italy, Luxembourg, Malta and Spain. The third cluster is made by France, Germany, Greece, Ireland and Netherlands, while the fourth cluster by Bulgaria, Croatia, Czech Republic, Hungary, Poland, Romania, Slovakia and Slovenia. In the last cluster there are Estonia, Latvia and Lithuania.")
+#MAPPING
+df_clusters = pd.DataFrame({'Country': Europe_df.index, 'Cluster': Europe_df.Cluster})
+figmap = go.Figure(data=go.Choropleth(locations=df_clusters['Country'], z=df_clusters['Cluster'], locationmode='country names', colorscale='Viridis', colorbar=dict(title='Cluster')))
+figmap.update_layout(title='European Countries Clusters', autosize=True)
+st.plotly_chart(figmap)

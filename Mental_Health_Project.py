@@ -11,7 +11,6 @@ import plotly.graph_objs as go
 import streamlit as st
 
 mental_health = pd.read_csv("Mental_Dataset.csv") 
-
 st.title("European Trends in Mental Health Project")
 st.header("Aim of the project")
 st.markdown("This project aims to analyze the spread of mental disorders across Europe from 1990 to 2017. The presentation is divided in two parts: in the first part I plotted (for all the 27 current European Countries) the trends in mental diseases, the prevalence in gender and heatmaps which show the correlation between each disorders. While, in the second part, I focused my attention on finding a proper model for this dataset looking at Europe as a whole and I decided to conduct a Cluster Analysis. In addition, I have plotted a European map where it can be visually seen which country belongs to each cluster.")
@@ -975,7 +974,6 @@ mblobs= plt.figure(figsize=(10,6))
 plt.scatter(x[:, 0], x[:,1])
 with st.expander("Blobs Scatter Plot"):
     st.pyplot(mblobs)
-
 EU_km = km(n_clusters=3, init="random", n_init=100, max_iter=100, tol = 1e-04, random_state=0)
 eu_y_km = EU_km.fit_predict(x)
 
@@ -1006,3 +1004,5 @@ df_clusters = pd.DataFrame({'Country': Europe_df.index, 'Cluster': Europe_df.Clu
 figmap = go.Figure(data=go.Choropleth(locations=df_clusters['Country'], z=df_clusters['Cluster'], locationmode='country names', colorscale='Viridis', colorbar=dict(title='Cluster')))
 figmap.update_layout(title='European Countries Clusters', autosize=True)
 st.plotly_chart(figmap)
+st.subheader("Last considerarions")
+st.write("As the map above shows, we can easily recognize the three clusters whose countries are geographically close to each other. That means that it can be a correlation between the spread of specific disorders and the geographic location of a State. I may assume that the diffusion is also influenced by cultural aspects.")
